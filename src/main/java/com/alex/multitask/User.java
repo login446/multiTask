@@ -13,20 +13,22 @@ public class User {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
     private String name;
-    private Date date_of_creation;
+    @Column(name = "date_of_creation", nullable = false, unique = false)
+    private Date dateOfCreation;
     @Column(name = "access_level", nullable = false, unique = false)
     @Enumerated(EnumType.STRING)
-    private AccessLevel access_level;
-    private boolean is_delete;
+    private AccessLevel accessLevel;
+    @Column(name = "is_delete", nullable = false, unique = false)
+    private boolean isDelete;
 
     public User() {
     }
 
     public User(String name) {
         this.name = name;
-        this.date_of_creation = new Date();
-        this.access_level = AccessLevel.USER;
-        this.is_delete = false;
+        this.dateOfCreation = new Date();
+        this.accessLevel = AccessLevel.USER;
+        this.isDelete = false;
     }
 
     public int getId() {
@@ -37,27 +39,27 @@ public class User {
         return name;
     }
 
-    public Date getDate_of_creation() {
-        return date_of_creation;
+    public Date getDateOfCreation() {
+        return dateOfCreation;
     }
 
-    public AccessLevel getAccess_level() {
-        return access_level;
+    public AccessLevel getAccessLevel() {
+        return accessLevel;
     }
 
-    public boolean is_delete() {
-        return is_delete;
+    public boolean isDelete() {
+        return isDelete;
     }
 
     public void setName(String name) {
         this.name = name;
     }
 
-    public void setIs_delete(boolean is_delete) {
-        this.is_delete = is_delete;
+    public void setAccessLevel(AccessLevel accessLevel) {
+        this.accessLevel = accessLevel;
     }
 
-    public void setAccess_level(AccessLevel access_level) {
-        this.access_level = access_level;
+    public void setDelete(boolean delete) {
+        isDelete = delete;
     }
 }

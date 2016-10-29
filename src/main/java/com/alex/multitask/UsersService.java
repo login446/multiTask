@@ -10,12 +10,12 @@ import java.util.List;
  * Created by alex on 29.10.2016.
  */
 @Service
-public class ServiceUsers {
+public class UsersService {
     @Autowired
-    private ComponentUsersDB db;
+    private UsersComponentDB db;
 
     public boolean isUserAdmin(int id) {
-        return db.findById(id).getAccess_level() == AccessLevel.ADMIN;
+        return db.findById(id).getAccessLevel() == AccessLevel.ADMIN;
     }
 
     public List<User> getUsers(int id) {
@@ -24,7 +24,7 @@ public class ServiceUsers {
         if (isUserAdmin(id))
             return list;
         for (User user : list) {
-            if (!user.is_delete())
+            if (!user.isDelete())
                 listForUser.add(user);
         }
         return listForUser;

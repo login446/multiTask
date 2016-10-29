@@ -10,7 +10,7 @@ import java.util.List;
  * Created by alex on 29.10.2016.
  */
 @Component
-public class ComponentUsersDB {
+public class UsersComponentDB {
     @Autowired
     private UsersRepository repository;
 
@@ -40,13 +40,13 @@ public class ComponentUsersDB {
 
     public void deleteUser(int id) {
         User user = findById(id);
-        user.setIs_delete(true);
+        user.setDelete(true);
         repository.save(user);
     }
 
     public void recoveryUser(int id) {
         User user = findById(id);
-        user.setIs_delete(false);
+        user.setDelete(false);
         repository.save(user);
     }
 

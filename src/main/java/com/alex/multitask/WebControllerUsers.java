@@ -12,10 +12,10 @@ import java.util.List;
 @RestController
 public class WebControllerUsers {
     @Autowired
-    ComponentUsersDB db;
+    UsersComponentDB db;
 
     @Autowired
-    ServiceUsers serviceUsers;
+    UsersService usersService;
 
     @RequestMapping(value = "/users/add", method = RequestMethod.POST)
     public User addUser(@RequestParam(value = "name") String name) {
@@ -42,7 +42,7 @@ public class WebControllerUsers {
             throw new NotFoundException();
         if (db.findById(idInt) == null)
             throw new NotFoundException();
-        if (usedIdInt != idInt && !serviceUsers.isUserAdmin(usedIdInt))
+        if (usedIdInt != idInt && !usersService.isUserAdmin(usedIdInt))
             throw new BadRequestException();
         db.deleteUser(idInt);
     }
@@ -61,7 +61,7 @@ public class WebControllerUsers {
             throw new NotFoundException();
         if (db.findById(idInt) == null)
             throw new NotFoundException();
-        if (usedIdInt != idInt && !serviceUsers.isUserAdmin(usedIdInt))
+        if (usedIdInt != idInt && !usersService.isUserAdmin(usedIdInt))
             throw new BadRequestException();
         db.recoveryUser(idInt);
     }
@@ -85,7 +85,7 @@ public class WebControllerUsers {
             throw new NotFoundException();
         if (db.findByName(name) != null)
             throw new ConflictException();
-        if (usedIdInt != idInt && !serviceUsers.isUserAdmin(usedIdInt))
+        if (usedIdInt != idInt && !usersService.isUserAdmin(usedIdInt))
             throw new BadRequestException();
         return db.renameUser(idInt, name);
     }
@@ -100,7 +100,7 @@ public class WebControllerUsers {
         }
         if (db.findById(usedIdInt) == null)
             throw new NotFoundException();
-        return serviceUsers.getUsers(usedIdInt);
+        return usersService.getUsers(usedIdInt);
     }
 
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)

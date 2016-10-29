@@ -15,7 +15,7 @@ public class ServiceUsers {
     private ComponentUsersDB db;
 
     public boolean isUserAdmin(int id) {
-        return db.findById(id).getLevel().equals("admin");
+        return db.findById(id).getAccess_level() == AccessLevel.ADMIN;
     }
 
     public List<User> getUsers(int id) {
@@ -24,7 +24,7 @@ public class ServiceUsers {
         if (isUserAdmin(id))
             return list;
         for (User user : list) {
-            if (!user.isDelete())
+            if (!user.is_delete())
                 listForUser.add(user);
         }
         return listForUser;

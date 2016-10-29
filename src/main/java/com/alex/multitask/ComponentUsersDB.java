@@ -40,13 +40,13 @@ public class ComponentUsersDB {
 
     public void deleteUser(int id) {
         User user = findById(id);
-        user.setDelete(1);
+        user.setIs_delete(true);
         repository.save(user);
     }
 
     public void recoveryUser(int id) {
         User user = findById(id);
-        user.setDelete(0);
+        user.setIs_delete(false);
         repository.save(user);
     }
 

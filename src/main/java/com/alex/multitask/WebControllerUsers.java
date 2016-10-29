@@ -17,7 +17,7 @@ public class WebControllerUsers {
     @Autowired
     ServiceUsers serviceUsers;
 
-    @RequestMapping(value = "/users/add", method = RequestMethod.GET)
+    @RequestMapping(value = "/users/add", method = RequestMethod.POST)
     public User addUser(@RequestParam(value = "name") String name) {
         if (name.isEmpty()) {
             throw new BadRequestException();

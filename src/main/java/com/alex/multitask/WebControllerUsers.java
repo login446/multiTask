@@ -12,10 +12,10 @@ import java.util.List;
 @RestController
 public class WebControllerUsers {
     @Autowired
-    UsersComponentDB db;
+    private UsersComponentDB db;
 
     @Autowired
-    UsersService usersService;
+    private UsersService usersService;
 
     @RequestMapping(value = "/users/add", method = RequestMethod.POST)
     public User addUser(@RequestParam(value = "name") String name) {
@@ -114,5 +114,4 @@ public class WebControllerUsers {
     @ResponseStatus(value = HttpStatus.CONFLICT)
     public class ConflictException extends RuntimeException {
     }
-
 }

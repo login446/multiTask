@@ -3,7 +3,7 @@ package com.alex.multitask.taskscheduler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by alex on 30.10.2016.
@@ -13,9 +13,31 @@ public class TaskService {
     @Autowired
     private TaskComponentDB db;
 
-    public List<Task> getAllTasksNoText(List<Task> list){
+    public List<Task> getAllTasksNoText(List<Task> list) {
         for (Task task : list)
             task.setTaskText(null);
         return list;
+    }
+
+    public List<Task> getAllTasksByFilter(int authorId,
+                                          int executorId,
+                                          String status,
+                                          Date deadline) {
+        HashSet<Task> set = new HashSet<Task>();
+        List<Task> result = new ArrayList<Task>();
+        if (authorId != 0) {
+            set.addAll(db.getAllTasksByAuthorId(authorId));
+        }
+        if (executorId != 0) {
+            set.addAll(db.getAllTasksByExecutorId(executorId));
+        }
+        if (!status.equals("noStatus")) {
+            set.addAll(db.getAllTasksByStatus(status.toUpperCase()));
+        }
+        if (deadline.getTime() != 0) {
+            set.addAll(db.getAllTasksByDeadline(deadline));
+        }
+        result.addAll(set);
+        return result;
     }
 }

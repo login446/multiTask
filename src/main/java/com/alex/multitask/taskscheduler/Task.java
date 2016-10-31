@@ -30,9 +30,19 @@ public class Task {
     public Task() {
     }
 
-    public Task(int authorId, Date dateOfCreation, String taskTitle, StatusTask status, String taskText, Date deadline, int executorId) {
+    public Task(int authorId, String taskTitle, String taskText, Date deadline, int executorId) {
         this.authorId = authorId;
-        this.dateOfCreation = dateOfCreation;
+        this.dateOfCreation = new Date();
+        this.taskTitle = taskTitle;
+        this.status = StatusTask.NEW;
+        this.taskText = taskText;
+        this.deadline = deadline;
+        this.executorId = executorId;
+    }
+
+    public Task(int authorId, String taskTitle, String taskText, Date deadline, int executorId, StatusTask status) {
+        this.authorId = authorId;
+        this.dateOfCreation = new Date();
         this.taskTitle = taskTitle;
         this.status = status;
         this.taskText = taskText;
@@ -86,5 +96,21 @@ public class Task {
 
     public void setExecutorId(int executorId) {
         this.executorId = executorId;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Task task = (Task) o;
+
+        return taskId == task.taskId;
+
+    }
+
+    @Override
+    public int hashCode() {
+        return taskId;
     }
 }

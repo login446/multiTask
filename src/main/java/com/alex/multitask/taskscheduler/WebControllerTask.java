@@ -32,14 +32,18 @@ public class WebControllerTask {
             @RequestParam(value = "authorId", required = false, defaultValue = "0") String authorId,
             @RequestParam(value = "executorId", required = false, defaultValue = "0") String executorId,
             @RequestParam(value = "status", required = false, defaultValue = "noStatus") String status,
-            @RequestParam(value = "deadline", required = false, defaultValue = "1970/01/01") String deadline) {
+            @RequestParam(value = "deadline", required = false, defaultValue = "1970/01/01 03:00") String deadline) {
         int authorIdInt, executorIdInt;
         Date dateDeadline;
         try {
             authorIdInt = Integer.parseInt(authorId);
             executorIdInt = Integer.parseInt(executorId);
+        } catch (NumberFormatException ex) {
+            throw new BadRequestException();
+        }
+        try {
             dateDeadline = new Date(deadline);
-        } catch (Exception ex) {
+        } catch (IllegalArgumentException ex) {
             throw new BadRequestException();
         }
         if (!(status.equals("new") || status.equals("work") || status.equals("made") || status.equals("noStatus")))
@@ -62,20 +66,23 @@ public class WebControllerTask {
 
     @RequestMapping(value = "/task/new", method = RequestMethod.POST)
     public Task addNewTask(@RequestParam(value = "usedId") String usedId,
-                        @RequestParam(value = "title") String title,
-                        @RequestParam(value = "text") String text,
-                        @RequestParam(value = "deadline") String deadline,
-                        @RequestParam(value = "executorId") String executorId) {
+                           @RequestParam(value = "title") String title,
+                           @RequestParam(value = "text") String text,
+                           @RequestParam(value = "deadline") String deadline,
+                           @RequestParam(value = "executorId") String executorId) {
         int usedIdInt, executorIdInt;
         Date deadlineDate;
         try {
             usedIdInt = Integer.parseInt(usedId);
             executorIdInt = Integer.parseInt(executorId);
-            deadlineDate = new Date(deadline);
-        } catch (Exception ex) {
+        } catch (NumberFormatException ex) {
             throw new BadRequestException();
         }
-
+        try {
+            deadlineDate = new Date(deadline);
+        } catch (IllegalArgumentException ex) {
+            throw new BadRequestException();
+        }
         return taskDB.addNewTask(usedIdInt, title, text, deadlineDate, executorIdInt);
     }
 

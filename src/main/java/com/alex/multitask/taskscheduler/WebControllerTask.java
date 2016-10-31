@@ -13,17 +13,17 @@ import java.util.List;
 @RestController
 public class WebControllerTask {
     @Autowired
-    private ComponentDB db;
+    private TaskComponentDB taskDB;
 
     @Autowired
-    private UsersComponentDB dbUsers;
+    private UsersComponentDB usersDB;
 
     @Autowired
     private TaskService taskService;
 
     @RequestMapping(value = "/task/all", method = RequestMethod.GET)
     public List<Task> getAllTasksNoText() {
-        return taskService.getAllTasksNoText(db.getAllTasks());
+        return taskService.getAllTasksNoText(taskDB.getAllTasks());
     }
 
     @RequestMapping(value = "/task/filter", method = RequestMethod.GET)

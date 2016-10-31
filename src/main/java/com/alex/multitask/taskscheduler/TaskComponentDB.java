@@ -10,7 +10,7 @@ import java.util.List;
  * Created by alex on 30.10.2016.
  */
 @Component
-public class ComponentDB {
+public class TaskComponentDB {
     @Autowired
     private CommentRepository commentRepository;
     @Autowired

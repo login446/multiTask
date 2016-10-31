@@ -11,7 +11,7 @@ import java.util.List;
 @Service
 public class TaskService {
     @Autowired
-    private ComponentDB db;
+    private TaskComponentDB db;
 
     public List<Task> getAllTasksNoText(List<Task> list){
         for (Task task : list)

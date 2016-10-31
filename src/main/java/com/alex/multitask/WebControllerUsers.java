@@ -91,7 +91,7 @@ public class WebControllerUsers {
     }
 
     @RequestMapping(value = "/users", method = RequestMethod.GET)
-    public List<User> method5(@RequestParam(value = "usedId") String usedId) {
+    public List<User> getUsers(@RequestParam(value = "usedId") String usedId) {
         int usedIdInt;
         try {
             usedIdInt = Integer.parseInt(usedId);

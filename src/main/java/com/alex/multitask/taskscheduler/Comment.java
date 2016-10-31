@@ -20,4 +20,34 @@ public class Comment {
     private int authorId;
     @Column(name = "comment_text", nullable = false, unique = false)
     private String commentText;
+
+    public Comment() {
+    }
+
+    public Comment(int taskId, Date dateOfCreation, int authorId, String commentText) {
+        this.taskId = taskId;
+        this.dateOfCreation = dateOfCreation;
+        this.authorId = authorId;
+        this.commentText = commentText;
+    }
+
+    public int getCommentId() {
+        return commentId;
+    }
+
+    public int getTaskId() {
+        return taskId;
+    }
+
+    public Date getDateOfCreation() {
+        return dateOfCreation;
+    }
+
+    public int getAuthorId() {
+        return authorId;
+    }
+
+    public String getCommentText() {
+        return commentText;
+    }
 }

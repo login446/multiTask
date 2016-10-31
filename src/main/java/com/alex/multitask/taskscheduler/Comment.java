@@ -24,9 +24,9 @@ public class Comment {
     public Comment() {
     }
 
-    public Comment(int taskId, Date dateOfCreation, int authorId, String commentText) {
+    public Comment(int taskId, int authorId, String commentText) {
         this.taskId = taskId;
-        this.dateOfCreation = dateOfCreation;
+        this.dateOfCreation = new Date();
         this.authorId = authorId;
         this.commentText = commentText;
     }

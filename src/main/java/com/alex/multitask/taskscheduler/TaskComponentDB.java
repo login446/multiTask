@@ -59,4 +59,25 @@ public class TaskComponentDB {
                            int executorId) {
         return taskRepository.save(new Task(usedId, title, text, deadline, executorId));
     }
+
+    public Task addNewTask(int usedId,
+                           String title,
+                           String text,
+                           Date deadline,
+                           int executorId,
+                           String status) {
+        StatusTask statusTask = null;
+        if (status.equals("new"))
+            statusTask = StatusTask.NEW;
+        if (status.equals("work"))
+            statusTask = StatusTask.WORK;
+        if (status.equals("made"))
+            statusTask = StatusTask.MADE;
+
+        return taskRepository.save(new Task(usedId, title, text, deadline, executorId, statusTask));
+    }
+
+    public Comment addComment(int taskId, int authorId, String commentText) {
+        return commentRepository.save(new Comment(taskId, authorId, commentText));
+    }
 }

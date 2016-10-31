@@ -83,29 +83,54 @@ public class WebControllerTask {
         } catch (IllegalArgumentException ex) {
             throw new BadRequestException();
         }
+        if (title.isEmpty())
+            throw new BadRequestException();
+        if (text.isEmpty())
+            throw new BadRequestException();
+        if (usersDB.findById(usedIdInt) == null)
+            throw new NotFoundException();
+        if (usersDB.findById(executorIdInt) == null)
+            throw new NotFoundException();
+
         return taskDB.addNewTask(usedIdInt, title, text, deadlineDate, executorIdInt);
     }
 
     @RequestMapping(value = "/task/edit", method = RequestMethod.POST)
-    public void method5(@RequestParam(value = "usedId") String usedId,
+    public Task addNewTaskStatus(@RequestParam(value = "usedId") String usedId,
                         @RequestParam(value = "title") String title,
                         @RequestParam(value = "text") String text,
                         @RequestParam(value = "deadline") String deadline,
                         @RequestParam(value = "executorId") String executorId,
                         @RequestParam(value = "status") String status) {
         int usedIdInt, executorIdInt;
+        Date deadlineDate;
         try {
             usedIdInt = Integer.parseInt(usedId);
             executorIdInt = Integer.parseInt(executorId);
         } catch (NumberFormatException ex) {
             throw new BadRequestException();
         }
+        try {
+            deadlineDate = new Date(deadline);
+        } catch (IllegalArgumentException ex) {
+            throw new BadRequestException();
+        }
+        if (title.isEmpty())
+            throw new BadRequestException();
+        if (text.isEmpty())
+            throw new BadRequestException();
+        if (usersDB.findById(usedIdInt) == null)
+            throw new NotFoundException();
+        if (usersDB.findById(executorIdInt) == null)
+            throw new NotFoundException();
+        if (!(status.equals("new") || status.equals("work") || status.equals("made")))
+            throw new BadRequestException();
 
-
+        return taskDB.addNewTask(usedIdInt, title, text, deadlineDate, executorIdInt, status);
     }
 
     @RequestMapping(value = "/comment/new", method = RequestMethod.POST)
-    public void method6(@RequestParam(value = "usedId") String usedId,
+    public Comment addComment(@RequestParam(value = "usedId") String usedId,
                         @RequestParam(value = "text") String text,
                         @RequestParam(value = "taskId") String taskId) {
         int usedIdInt, taskIdInt;
@@ -115,8 +140,14 @@ public class WebControllerTask {
         } catch (NumberFormatException ex) {
             throw new BadRequestException();
         }
+        if (text.isEmpty())
+            throw new BadRequestException();
+        if (usersDB.findById(usedIdInt) == null)
+            throw new NotFoundException();
+        if (taskDB.getTask(taskIdInt) == null)
+            throw new NotFoundException();
 
-
+        return taskDB.addComment(taskIdInt, usedIdInt, text);
     }
 
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)

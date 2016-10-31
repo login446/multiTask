@@ -97,11 +97,11 @@ public class WebControllerTask {
 
     @RequestMapping(value = "/task/edit", method = RequestMethod.POST)
     public Task addNewTaskStatus(@RequestParam(value = "usedId") String usedId,
-                        @RequestParam(value = "title") String title,
-                        @RequestParam(value = "text") String text,
-                        @RequestParam(value = "deadline") String deadline,
-                        @RequestParam(value = "executorId") String executorId,
-                        @RequestParam(value = "status") String status) {
+                                 @RequestParam(value = "title") String title,
+                                 @RequestParam(value = "text") String text,
+                                 @RequestParam(value = "deadline") String deadline,
+                                 @RequestParam(value = "executorId") String executorId,
+                                 @RequestParam(value = "status") String status) {
         int usedIdInt, executorIdInt;
         Date deadlineDate;
         try {
@@ -131,8 +131,8 @@ public class WebControllerTask {
 
     @RequestMapping(value = "/comment/new", method = RequestMethod.POST)
     public Comment addComment(@RequestParam(value = "usedId") String usedId,
-                        @RequestParam(value = "text") String text,
-                        @RequestParam(value = "taskId") String taskId) {
+                              @RequestParam(value = "text") String text,
+                              @RequestParam(value = "taskId") String taskId) {
         int usedIdInt, taskIdInt;
         try {
             usedIdInt = Integer.parseInt(usedId);
@@ -146,6 +146,8 @@ public class WebControllerTask {
             throw new NotFoundException();
         if (taskDB.getTask(taskIdInt) == null)
             throw new NotFoundException();
+        if (taskDB.getComment(taskIdInt) != null)
+            throw new ConflictException();
 
         return taskDB.addComment(taskIdInt, usedIdInt, text);
     }

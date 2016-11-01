@@ -31,6 +31,14 @@ public class User {
         this.isDelete = false;
     }
 
+    public User(int id, String name, Date dateOfCreation, AccessLevel accessLevel, boolean isDelete) {
+        this.id = id;
+        this.name = name;
+        this.dateOfCreation = dateOfCreation;
+        this.accessLevel = accessLevel;
+        this.isDelete = isDelete;
+    }
+
     public int getId() {
         return id;
     }

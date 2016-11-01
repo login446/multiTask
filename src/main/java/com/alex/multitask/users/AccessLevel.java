@@ -1,4 +1,4 @@
-package com.alex.multitask;
+package com.alex.multitask.users;
 
 /**
  * Created by alex on 29.10.2016.

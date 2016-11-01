@@ -1,4 +1,4 @@
-package com.alex.multitask.taskscheduler;
+package com.alex.multitask.tasks;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -69,9 +69,9 @@ public class TaskComponentDB {
         StatusTask statusTask = null;
         if (status.equals("new"))
             statusTask = StatusTask.NEW;
-        if (status.equals("work"))
+        else if (status.equals("work"))
             statusTask = StatusTask.WORK;
-        if (status.equals("made"))
+        else if (status.equals("made"))
             statusTask = StatusTask.MADE;
 
         return taskRepository.save(new Task(usedId, title, text, deadline, executorId, statusTask));

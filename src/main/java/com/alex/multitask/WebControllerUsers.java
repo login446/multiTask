@@ -1,5 +1,8 @@
 package com.alex.multitask;
 
+import com.alex.multitask.users.User;
+import com.alex.multitask.users.UsersComponentDB;
+import com.alex.multitask.users.UsersService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;

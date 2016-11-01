@@ -1,4 +1,4 @@
-package com.alex.multitask.taskscheduler;
+package com.alex.multitask.tasks;
 
 /**
  * Created by alex on 30.10.2016.

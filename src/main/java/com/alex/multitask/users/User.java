@@ -1,4 +1,4 @@
-package com.alex.multitask;
+package com.alex.multitask.users;
 
 import javax.persistence.*;
 import java.util.Date;

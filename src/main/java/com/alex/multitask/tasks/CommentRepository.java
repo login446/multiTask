@@ -1,4 +1,4 @@
-package com.alex.multitask.taskscheduler;
+package com.alex.multitask.tasks;
 
 import org.springframework.data.repository.CrudRepository;
 

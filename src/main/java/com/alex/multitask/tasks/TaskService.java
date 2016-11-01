@@ -1,4 +1,4 @@
-package com.alex.multitask.taskscheduler;
+package com.alex.multitask.tasks;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

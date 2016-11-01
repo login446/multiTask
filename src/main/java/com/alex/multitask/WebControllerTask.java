@@ -1,6 +1,7 @@
-package com.alex.multitask.taskscheduler;
+package com.alex.multitask;
 
-import com.alex.multitask.UsersComponentDB;
+import com.alex.multitask.users.UsersComponentDB;
+import com.alex.multitask.tasks.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;

@@ -1,6 +1,5 @@
-package com.alex.multitask.taskscheduler;
+package com.alex.multitask.tasks;
 
-import com.alex.multitask.User;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.Date;

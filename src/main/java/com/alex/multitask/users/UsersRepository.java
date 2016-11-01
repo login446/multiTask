@@ -1,4 +1,4 @@
-package com.alex.multitask;
+package com.alex.multitask.users;
 
 import org.springframework.data.repository.CrudRepository;
 

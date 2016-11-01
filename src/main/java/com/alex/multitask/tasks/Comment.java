@@ -1,4 +1,4 @@
-package com.alex.multitask.taskscheduler;
+package com.alex.multitask.tasks;
 
 import javax.persistence.*;
 import java.util.Date;

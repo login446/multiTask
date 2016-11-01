@@ -45,7 +45,7 @@ public class WebControllerUsers {
             throw new NotFoundException();
         if (db.findById(idInt) == null)
             throw new NotFoundException();
-        if (usedIdInt != idInt && !usersService.isUserAdmin(usedIdInt))
+        if (usedIdInt != idInt && !usersService.isUserAdmin(db.findById(usedIdInt)))
             throw new BadRequestException();
         db.deleteUser(idInt);
     }
@@ -64,7 +64,7 @@ public class WebControllerUsers {
             throw new NotFoundException();
         if (db.findById(idInt) == null)
             throw new NotFoundException();
-        if (usedIdInt != idInt && !usersService.isUserAdmin(usedIdInt))
+        if (usedIdInt != idInt && !usersService.isUserAdmin(db.findById(usedIdInt)))
             throw new BadRequestException();
         db.recoveryUser(idInt);
     }
@@ -88,7 +88,7 @@ public class WebControllerUsers {
             throw new NotFoundException();
         if (db.findByName(name) != null)
             throw new ConflictException();
-        if (usedIdInt != idInt && !usersService.isUserAdmin(usedIdInt))
+        if (usedIdInt != idInt && !usersService.isUserAdmin(db.findById(usedIdInt)))
             throw new BadRequestException();
         return db.renameUser(idInt, name);
     }
@@ -103,7 +103,7 @@ public class WebControllerUsers {
         }
         if (db.findById(usedIdInt) == null)
             throw new NotFoundException();
-        return usersService.getUsers(usedIdInt);
+        return usersService.getUsers(db.findById(usedIdInt));
     }
 
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)

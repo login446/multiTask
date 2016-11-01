@@ -34,26 +34,30 @@ public class UsersComponentDB {
     }
 
     public User addUser(String name) {
-        repository.save(new User(name));
-        return findByName(name);
+        return repository.save(new User(name));
     }
 
     public void deleteUser(int id) {
         User user = findById(id);
+        if(user == null)
+            return;
         user.setDelete(true);
         repository.save(user);
     }
 
     public void recoveryUser(int id) {
         User user = findById(id);
+        if(user == null)
+            return;
         user.setDelete(false);
         repository.save(user);
     }
 
     public User renameUser(int id, String name) {
         User user = findById(id);
+        if(user == null)
+            return null;
         user.setName(name);
-        repository.save(user);
-        return user;
+        return repository.save(user);
     }
 }

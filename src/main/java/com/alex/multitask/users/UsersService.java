@@ -14,18 +14,18 @@ public class UsersService {
     @Autowired
     private UsersComponentDB db;
 
-    public boolean isUserAdmin(int id) {
-        return db.findById(id).getAccessLevel() == AccessLevel.ADMIN;
+    public boolean isUserAdmin(User user) {
+        return user != null && user.getAccessLevel() == AccessLevel.ADMIN;
     }
 
-    public List<User> getUsers(int id) {
+    public List<User> getUsers(User user) {
         List<User> list = db.findAll();
-        ArrayList<User> listForUser = new ArrayList<User>(list.size());
-        if (isUserAdmin(id))
+        ArrayList<User> listForUser = new ArrayList<User>();
+        if (isUserAdmin(user))
             return list;
-        for (User user : list) {
-            if (!user.isDelete())
-                listForUser.add(user);
+        for (User temp : list) {
+            if (!temp.isDelete())
+                listForUser.add(temp);
         }
         return listForUser;
     }

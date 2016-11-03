@@ -41,12 +41,15 @@ public class WebControllerUsers {
         } catch (NumberFormatException ex) {
             throw new BadRequestException();
         }
-        if (db.findById(usedIdInt) == null)
+
+        User usedUser = db.findById(usedIdInt);
+        if (usedUser == null)
             throw new NotFoundException();
         if (db.findById(idInt) == null)
             throw new NotFoundException();
-        if (usedIdInt != idInt && !usersService.isUserAdmin(db.findById(usedIdInt)))
+        if (usedIdInt != idInt && !usersService.isUserAdmin(usedUser))
             throw new BadRequestException();
+
         db.deleteUser(idInt);
     }
 
@@ -60,12 +63,15 @@ public class WebControllerUsers {
         } catch (NumberFormatException ex) {
             throw new BadRequestException();
         }
-        if (db.findById(usedIdInt) == null)
+
+        User usedUser = db.findById(usedIdInt);
+        if (usedUser == null)
             throw new NotFoundException();
         if (db.findById(idInt) == null)
             throw new NotFoundException();
-        if (usedIdInt != idInt && !usersService.isUserAdmin(db.findById(usedIdInt)))
+        if (usedIdInt != idInt && !usersService.isUserAdmin(usedUser))
             throw new BadRequestException();
+
         db.recoveryUser(idInt);
     }
 
@@ -80,16 +86,19 @@ public class WebControllerUsers {
         } catch (NumberFormatException ex) {
             throw new BadRequestException();
         }
+
+        User usedUser = db.findById(usedIdInt);
         if (name.isEmpty())
             throw new BadRequestException();
-        if (db.findById(usedIdInt) == null)
+        if (usedUser == null)
             throw new NotFoundException();
         if (db.findById(idInt) == null)
             throw new NotFoundException();
         if (db.findByName(name) != null)
             throw new ConflictException();
-        if (usedIdInt != idInt && !usersService.isUserAdmin(db.findById(usedIdInt)))
+        if (usedIdInt != idInt && !usersService.isUserAdmin(usedUser))
             throw new BadRequestException();
+
         return db.renameUser(idInt, name);
     }
 
@@ -101,9 +110,11 @@ public class WebControllerUsers {
         } catch (NumberFormatException ex) {
             throw new BadRequestException();
         }
-        if (db.findById(usedIdInt) == null)
+        User usedUser = db.findById(usedIdInt);
+        if (usedUser == null)
             throw new NotFoundException();
-        return usersService.getUsers(db.findById(usedIdInt));
+
+        return usersService.getUsers(usedUser);
     }
 
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)

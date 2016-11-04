@@ -10,7 +10,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 /**
  * Created by admin on 04.11.2016.
@@ -31,9 +32,9 @@ public class TaskServiceTest {
         list.add(new Task(1, "title", "text", new Date(), 1));
         List<Task> result = service.getAllTasksNoText(list);
 
-        assertNull(result.get(0).getTaskText());
-        assertNull(result.get(1).getTaskText());
-        assertNull(result.get(2).getTaskText());
+        assertEquals(result.get(0).getTaskText(), "");
+        assertEquals(result.get(1).getTaskText(), "");
+        assertEquals(result.get(2).getTaskText(), "");
     }
 
     @Test

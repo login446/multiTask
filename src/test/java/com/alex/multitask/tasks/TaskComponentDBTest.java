@@ -63,8 +63,8 @@ public class TaskComponentDBTest {
         assertThat(list.get(0).getAuthorId()).isEqualTo(1);
         assertThat(list.get(1).getAuthorId()).isEqualTo(1);
 
-        List<Task> listNull = db.getAllTasksByAuthorId(99);
-        assertThat(listNull).isNull();
+        List<Task> listEmpty = db.getAllTasksByAuthorId(99);
+        assertThat(listEmpty.size()).isEqualTo(0);
     }
 
     @Test
@@ -74,19 +74,19 @@ public class TaskComponentDBTest {
         assertThat(list.get(0).getExecutorId()).isEqualTo(2);
         assertThat(list.get(1).getExecutorId()).isEqualTo(2);
 
-        List<Task> listNull = db.getAllTasksByAuthorId(99);
-        assertThat(listNull).isNull();
+        List<Task> listEmpty = db.getAllTasksByAuthorId(99);
+        assertThat(listEmpty.size()).isEqualTo(0);
     }
 
     @Test
     public void testGetAllTasksByStatus() throws Exception {
-        List<Task> list = db.getAllTasksByStatus("NEW");
+        List<Task> list = db.getAllTasksByStatus(StatusTask.NEW);
         assertThat(list.size()).isEqualTo(2);
-        assertThat(list.get(0).getStatus()).isEqualTo(StatusTask.NEW);
-        assertThat(list.get(1).getStatus()).isEqualTo(StatusTask.NEW);
+        assertThat(list.get(0).getStatus()).isSameAs(StatusTask.NEW);
+        assertThat(list.get(1).getStatus()).isSameAs(StatusTask.NEW);
 
-        List<Task> listNull = db.getAllTasksByStatus("GG");
-        assertThat(listNull).isNull();
+        List<Task> listEmpty = db.getAllTasksByStatus(null);
+        assertThat(listEmpty.size()).isEqualTo(0);
     }
 
     @Test
@@ -94,11 +94,11 @@ public class TaskComponentDBTest {
         Date date = new Date("2016/11/07 17:23");
         List<Task> list = db.getAllTasksByDeadline(date);
         assertThat(list.size()).isEqualTo(2);
-        assertThat(list.get(0).getDeadline()).isEqualTo(date);
-        assertThat(list.get(1).getDeadline()).isEqualTo(date);
+        assertThat(list.get(0).getDeadline().getTime()).isEqualTo(date.getTime());
+        assertThat(list.get(1).getDeadline().getTime()).isEqualTo(date.getTime());
 
-        List<Task> listNull = db.getAllTasksByDeadline(new Date("2002/11/11"));
-        assertThat(listNull).isNull();
+        List<Task> listEmpty = db.getAllTasksByDeadline(new Date("2002/11/11"));
+        assertThat(listEmpty.size()).isEqualTo(0);
     }
 
     @Test

@@ -44,7 +44,7 @@ public class TaskComponentDB {
         return taskRepository.findByExecutorId(executorId);
     }
 
-    public List<Task> getAllTasksByStatus(String status) {
+    public List<Task> getAllTasksByStatus(StatusTask status) {
         return taskRepository.findByStatus(status);
     }
 

@@ -18,7 +18,7 @@ public class TaskService {
             return null;
 
         for (Task task : list)
-            task.setTaskText(null);
+            task.setTaskText("");
         return list;
     }
 
@@ -45,7 +45,7 @@ public class TaskService {
             set.addAll(db.getAllTasksByExecutorId(executorId));
         }
         if (!status.equals("noStatus")) {
-            set.addAll(db.getAllTasksByStatus(status.toUpperCase()));
+            set.addAll(db.getAllTasksByStatus(statusTask(status)));
         }
         if (deadline.getTime() != 0) {
             set.addAll(db.getAllTasksByDeadline(deadline));

@@ -3,7 +3,6 @@ package com.alex.multitask;
 import com.alex.multitask.tasks.TaskComponentDB;
 import com.alex.multitask.tasks.TaskService;
 import com.alex.multitask.users.UsersComponentDB;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,8 +12,12 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.Date;
+
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
  * Created by alex on 01.11.2016.
@@ -40,34 +43,434 @@ public class WebControllerTaskTest {
     @Test
     public void testGetAllTasksNoText() throws Exception {
         mockMvc.perform(get("/task/all"))
-                .andExpect(jsonPath("$.size").value(3))
-                .andExpect(jsonPath("$[0].getTaskText").value(null))
-                .andExpect(jsonPath("$[1].getTaskText").value(null))
-                .andExpect(jsonPath("$[2].getTaskText").value(null));
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(3))
+                .andExpect(jsonPath("$[0].taskText").value(""))
+                .andExpect(jsonPath("$[1].taskText").value(""))
+                .andExpect(jsonPath("$[2].taskText").value(""));
     }
 
     @Test
     public void testGetAllTasksByFilter() throws Exception {
+        mockMvc.perform(get("/task/filter")
+                .param("authorId", "1")
+                .param("executorId", "2")
+                .param("status", "new")
+                .param("deadline", "2016/11/09 17:23"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(3))
+                .andExpect(jsonPath("$[0].taskText").value(""))
+                .andExpect(jsonPath("$[1].taskText").value(""))
+                .andExpect(jsonPath("$[2].taskText").value(""));
+    }
 
+    @Test
+    public void testGetAllTasksByFilterAuthorId() throws Exception {
+        mockMvc.perform(get("/task/filter")
+                .param("authorId", "1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(2))
+                .andExpect(jsonPath("$[0].authorId").value(1))
+                .andExpect(jsonPath("$[1].authorId").value(1));
+    }
+
+    @Test
+    public void testGetAllTasksByFilterExecutorId() throws Exception {
+        mockMvc.perform(get("/task/filter")
+                .param("executorId", "2"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(2))
+                .andExpect(jsonPath("$[0].executorId").value(2))
+                .andExpect(jsonPath("$[1].executorId").value(2));
+    }
+
+    @Test
+    public void testGetAllTasksByFilterStatus() throws Exception {
+        mockMvc.perform(get("/task/filter")
+                .param("status", "new"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(2))
+                .andExpect(jsonPath("$[0].status").value("NEW"))
+                .andExpect(jsonPath("$[1].status").value("NEW"));
+    }
+
+    @Test
+    public void testGetAllTasksByFilterDeadline() throws Exception {
+        mockMvc.perform(get("/task/filter")
+                .param("deadline", "2016/11/07 17:23"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(2))
+                .andExpect(jsonPath("$[0].deadline").value(new Date("2016/11/07 17:23").getTime()))
+                .andExpect(jsonPath("$[1].deadline").value(new Date("2016/11/07 17:23").getTime()));
+    }
+
+    @Test
+    public void testGetAllTasksByFilterAuthorIdAndStatus() throws Exception {
+        mockMvc.perform(get("/task/filter")
+                .param("authorId", "1")
+                .param("status", "work"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(3))
+                .andExpect(jsonPath("$[0].taskText").value(""))
+                .andExpect(jsonPath("$[1].taskText").value(""))
+                .andExpect(jsonPath("$[2].taskText").value(""));
+    }
+
+    @Test
+    public void testGetAllTasksByFilterNoParam() throws Exception {
+        mockMvc.perform(get("/task/filter"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(0));
+    }
+
+    @Test
+    public void testGetAllTasksByFilterBadParamAuthorId() throws Exception {
+        mockMvc.perform(get("/task/filter")
+                .param("authorId", "22ff")
+                .param("executorId", "2")
+                .param("status", "new")
+                .param("deadline", "2016/11/09 17:23"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void testGetAllTasksByFilterBadParamExecutorId() throws Exception {
+        mockMvc.perform(get("/task/filter")
+                .param("authorId", "1")
+                .param("executorId", "2gfg")
+                .param("status", "new")
+                .param("deadline", "2016/11/09 17:23"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void testGetAllTasksByFilterBadParamStatus() throws Exception {
+        mockMvc.perform(get("/task/filter")
+                .param("authorId", "1")
+                .param("executorId", "2")
+                .param("status", "babad")
+                .param("deadline", "2016/11/09 17:23"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void testGetAllTasksByFilterBadParamDeadline() throws Exception {
+        mockMvc.perform(get("/task/filter")
+                .param("authorId", "1")
+                .param("executorId", "2")
+                .param("status", "new")
+                .param("deadline", "999999ff"))
+                .andExpect(status().isBadRequest());
     }
 
     @Test
     public void testGetTaskAndComment() throws Exception {
+        mockMvc.perform(get("/task/byId")
+                .param("taskId", "2"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.task.taskId").value(2))
+                .andExpect(jsonPath("$.task.authorId").value(1))
+                .andExpect(jsonPath("$.task.taskTitle").value("title2"))
+                .andExpect(jsonPath("$.task.taskText").value("text2"))
+                .andExpect(jsonPath("$.comment.taskId").value(2))
+                .andExpect(jsonPath("$.comment.authorId").value(1))
+                .andExpect(jsonPath("$.comment.commentText").value("comment1"));
 
+        mockMvc.perform(get("/task/byId")
+                .param("taskId", "1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.task.taskId").value(1))
+                .andExpect(jsonPath("$.task.authorId").value(1))
+                .andExpect(jsonPath("$.task.taskTitle").value("title1"))
+                .andExpect(jsonPath("$.task.taskText").value("text1"))
+                .andExpect(jsonPath("$.comment").doesNotExist());
+
+        mockMvc.perform(get("/task/byId")
+                .param("taskId", "999"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.task").doesNotExist())
+                .andExpect(jsonPath("$.comment").doesNotExist());
+    }
+
+    @Test
+    public void testGetTaskAndCommentBadParam() throws Exception {
+        mockMvc.perform(get("/task/byId")
+                .param("taskId", "ffdf"))
+                .andExpect(status().isBadRequest());
     }
 
     @Test
     public void testAddNewTask() throws Exception {
+        mockMvc.perform(post("/task/new")
+                .param("usedId", "1")
+                .param("title", "titleee")
+                .param("text", "texttt")
+                .param("deadline", "2222/12/22 12:24")
+                .param("executorId", "1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.authorId").value("1"))
+                .andExpect(jsonPath("$.status").value("NEW"))
+                .andExpect(jsonPath("$.taskTitle").value("titleee"))
+                .andExpect(jsonPath("$.taskText").value("texttt"))
+                .andExpect(jsonPath("$.deadline").value(new Date("2222/12/22 12:24").getTime()))
+                .andExpect(jsonPath("$.executorId").value(1));
+    }
 
+    @Test
+    public void testAddNewTaskBadUsedId() throws Exception {
+        mockMvc.perform(post("/task/new")
+                .param("usedId", "1ff")
+                .param("title", "titleee")
+                .param("text", "texttt")
+                .param("deadline", "2222/12/22 12:24")
+                .param("executorId", "1"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void testAddNewTaskBadExecutorId() throws Exception {
+        mockMvc.perform(post("/task/new")
+                .param("usedId", "1")
+                .param("title", "titleee")
+                .param("text", "texttt")
+                .param("deadline", "2222/12/22 12:24")
+                .param("executorId", "44ff"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void testAddNewTaskBadDeadline() throws Exception {
+        mockMvc.perform(post("/task/new")
+                .param("usedId", "1")
+                .param("title", "titleee")
+                .param("text", "texttt")
+                .param("deadline", "1231313")
+                .param("executorId", "1"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void testAddNewTaskTitleIsEmpty() throws Exception {
+        mockMvc.perform(post("/task/new")
+                .param("usedId", "1")
+                .param("title", "")
+                .param("text", "texttt")
+                .param("deadline", "2222/12/22 12:24")
+                .param("executorId", "1"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void testAddNewTaskTextIsEmpty() throws Exception {
+        mockMvc.perform(post("/task/new")
+                .param("usedId", "1")
+                .param("title", "titleee")
+                .param("text", "")
+                .param("deadline", "2222/12/22 12:24")
+                .param("executorId", "1"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void testAddNewTaskNoUsed() throws Exception {
+        mockMvc.perform(post("/task/new")
+                .param("usedId", "1")
+                .param("title", "titleee")
+                .param("text", "texttt")
+                .param("deadline", "2222/12/22 12:24")
+                .param("executorId", "99"))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void testAddNewTaskNoExecutor() throws Exception {
+        mockMvc.perform(post("/task/new")
+                .param("usedId", "1")
+                .param("title", "titleee")
+                .param("text", "texttt")
+                .param("deadline", "2222/12/22 12:24")
+                .param("executorId", "99"))
+                .andExpect(status().isNotFound());
     }
 
     @Test
     public void testAddNewTaskStatus() throws Exception {
+        mockMvc.perform(post("/task/edit")
+                .param("usedId", "1")
+                .param("title", "titleee")
+                .param("text", "texttt")
+                .param("deadline", "2222/12/22 12:24")
+                .param("executorId", "1")
+                .param("status", "work"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.authorId").value("1"))
+                .andExpect(jsonPath("$.status").value("WORK"))
+                .andExpect(jsonPath("$.taskTitle").value("titleee"))
+                .andExpect(jsonPath("$.taskText").value("texttt"))
+                .andExpect(jsonPath("$.deadline").value(new Date("2222/12/22 12:24").getTime()))
+                .andExpect(jsonPath("$.executorId").value(1));
+    }
 
+    @Test
+    public void testAddNewTaskStatusBadUsedId() throws Exception {
+        mockMvc.perform(post("/task/edit")
+                .param("usedId", "1ff")
+                .param("title", "titleee")
+                .param("text", "texttt")
+                .param("deadline", "2222/12/22 12:24")
+                .param("executorId", "1")
+                .param("status", "work"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void testAddNewTaskStatusBadExecutorId() throws Exception {
+        mockMvc.perform(post("/task/edit")
+                .param("usedId", "1")
+                .param("title", "titleee")
+                .param("text", "texttt")
+                .param("deadline", "2222/12/22 12:24")
+                .param("executorId", "44ff")
+                .param("status", "work"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void testAddNewTaskStatusBadDeadline() throws Exception {
+        mockMvc.perform(post("/task/edit")
+                .param("usedId", "1")
+                .param("title", "titleee")
+                .param("text", "texttt")
+                .param("deadline", "1231313")
+                .param("executorId", "1")
+                .param("status", "work"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void testAddNewTaskStatusTitleIsEmpty() throws Exception {
+        mockMvc.perform(post("/task/edit")
+                .param("usedId", "1")
+                .param("title", "")
+                .param("text", "texttt")
+                .param("deadline", "2222/12/22 12:24")
+                .param("executorId", "1")
+                .param("status", "work"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void testAddNewTaskStatusTextIsEmpty() throws Exception {
+        mockMvc.perform(post("/task/edit")
+                .param("usedId", "1")
+                .param("title", "titleee")
+                .param("text", "")
+                .param("deadline", "2222/12/22 12:24")
+                .param("executorId", "1")
+                .param("status", "work"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void testAddNewTaskStatusNoUsed() throws Exception {
+        mockMvc.perform(post("/task/edit")
+                .param("usedId", "1")
+                .param("title", "titleee")
+                .param("text", "texttt")
+                .param("deadline", "2222/12/22 12:24")
+                .param("executorId", "99")
+                .param("status", "work"))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void testAddNewTaskStatusNoExecutor() throws Exception {
+        mockMvc.perform(post("/task/edit")
+                .param("usedId", "1")
+                .param("title", "titleee")
+                .param("text", "texttt")
+                .param("deadline", "2222/12/22 12:24")
+                .param("executorId", "99")
+                .param("status", "work"))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void testAddNewTaskStatusBadStatus() throws Exception {
+        mockMvc.perform(post("/task/edit")
+                .param("usedId", "1")
+                .param("title", "titleee")
+                .param("text", "texttt")
+                .param("deadline", "2222/12/22 12:24")
+                .param("executorId", "1")
+                .param("status", "bobi"))
+                .andExpect(status().isBadRequest());
     }
 
     @Test
     public void testAddComment() throws Exception {
+        mockMvc.perform(post("/comment/new")
+                .param("usedId", "1")
+                .param("text", "text")
+                .param("taskId", "1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.commentId").value(3))
+                .andExpect(jsonPath("$.taskId").value(1))
+                .andExpect(jsonPath("$.authorId").value(1))
+                .andExpect(jsonPath("$.commentText").value("text"));
+    }
 
+    @Test
+    public void testAddCommentBadUsed() throws Exception {
+        mockMvc.perform(post("/comment/new")
+                .param("usedId", "gfgf")
+                .param("text", "text")
+                .param("taskId", "1"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void testAddCommentBadTask() throws Exception {
+        mockMvc.perform(post("/comment/new")
+                .param("usedId", "1")
+                .param("text", "text")
+                .param("taskId", "fgfg"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void testAddCommentTextIsEmpty() throws Exception {
+        mockMvc.perform(post("/comment/new")
+                .param("usedId", "1")
+                .param("text", "")
+                .param("taskId", "1"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void testAddCommentNoUsed() throws Exception {
+        mockMvc.perform(post("/comment/new")
+                .param("usedId", "99")
+                .param("text", "text")
+                .param("taskId", "1"))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void testAddCommentNoTask() throws Exception {
+        mockMvc.perform(post("/comment/new")
+                .param("usedId", "1")
+                .param("text", "text")
+                .param("taskId", "99"))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void testAddCommentIsComment() throws Exception {
+        mockMvc.perform(post("/comment/new")
+                .param("usedId", "1")
+                .param("text", "text")
+                .param("taskId", "2"))
+                .andExpect(status().isConflict());
     }
 }

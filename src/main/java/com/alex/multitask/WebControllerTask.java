@@ -93,7 +93,7 @@ public class WebControllerTask {
         if (usersDB.findById(executorIdInt) == null)
             throw new NotFoundException();
 
-        return taskDB.addNewTask(usedIdInt, title, text, deadlineDate, executorIdInt);
+        return taskDB.addNewTask(new Task(usedIdInt, title, text, deadlineDate, executorIdInt));
     }
 
     @RequestMapping(value = "/task/edit", method = RequestMethod.POST)
@@ -127,7 +127,8 @@ public class WebControllerTask {
         if (!(status.equals("new") || status.equals("work") || status.equals("made")))
             throw new BadRequestException();
 
-        return taskDB.addNewTask(usedIdInt, title, text, deadlineDate, executorIdInt, status);
+        return taskDB.addNewTask(new Task(usedIdInt, title, text, deadlineDate,
+                executorIdInt, taskService.statusTask(status)));
     }
 
     @RequestMapping(value = "/comment/new", method = RequestMethod.POST)
@@ -150,7 +151,7 @@ public class WebControllerTask {
         if (taskDB.getComment(taskIdInt) != null)
             throw new ConflictException();
 
-        return taskDB.addComment(taskIdInt, usedIdInt, text);
+        return taskDB.addComment(new Comment(taskIdInt, usedIdInt, text));
     }
 
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)

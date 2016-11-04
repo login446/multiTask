@@ -52,32 +52,11 @@ public class TaskComponentDB {
         return taskRepository.findByDeadline(deadline);
     }
 
-    public Task addNewTask(int usedId,
-                           String title,
-                           String text,
-                           Date deadline,
-                           int executorId) {
-        return taskRepository.save(new Task(usedId, title, text, deadline, executorId));
+    public Task addNewTask(Task task) {
+        return taskRepository.save(task);
     }
 
-    public Task addNewTask(int usedId,
-                           String title,
-                           String text,
-                           Date deadline,
-                           int executorId,
-                           String status) {
-        StatusTask statusTask = null;
-        if (status.equals("new"))
-            statusTask = StatusTask.NEW;
-        else if (status.equals("work"))
-            statusTask = StatusTask.WORK;
-        else if (status.equals("made"))
-            statusTask = StatusTask.MADE;
-
-        return taskRepository.save(new Task(usedId, title, text, deadline, executorId, statusTask));
-    }
-
-    public Comment addComment(int taskId, int authorId, String commentText) {
-        return commentRepository.save(new Comment(taskId, authorId, commentText));
+    public Comment addComment(Comment comment) {
+        return commentRepository.save(comment);
     }
 }

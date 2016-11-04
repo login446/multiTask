@@ -14,9 +14,22 @@ public class TaskService {
     private TaskComponentDB db;
 
     public List<Task> getAllTasksNoText(List<Task> list) {
+        if(list == null)
+            return null;
+
         for (Task task : list)
             task.setTaskText(null);
         return list;
+    }
+
+    public StatusTask statusTask(String status) {
+        if (status.equals("new"))
+            return StatusTask.NEW;
+        if (status.equals("work"))
+            return StatusTask.WORK;
+        if (status.equals("made"))
+            return StatusTask.MADE;
+        return null;
     }
 
     public List<Task> getAllTasksByFilter(int authorId,

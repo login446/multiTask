@@ -104,7 +104,7 @@ public class TaskComponentDBTest {
     @Test
     public void testAddNewTask() throws Exception {
         Task task = new Task(2, "title33", "text33", new Date(), 2, StatusTask.NEW);
-        Task result = db.addNewTask(task);
+        Task result = db.saveTask(task);
 
         assertThat(result.getAuthorId()).isEqualTo(task.getAuthorId());
         assertThat(result.getTaskTitle()).isEqualTo(task.getTaskTitle());

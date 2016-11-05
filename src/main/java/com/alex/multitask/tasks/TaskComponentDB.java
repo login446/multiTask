@@ -52,7 +52,7 @@ public class TaskComponentDB {
         return taskRepository.findByDeadline(deadline);
     }
 
-    public Task addNewTask(Task task) {
+    public Task saveTask(Task task) {
         return taskRepository.save(task);
     }
 

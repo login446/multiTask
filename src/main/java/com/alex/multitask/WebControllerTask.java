@@ -93,20 +93,22 @@ public class WebControllerTask {
         if (usersDB.findById(executorIdInt) == null)
             throw new NotFoundException();
 
-        return taskDB.addNewTask(new Task(usedIdInt, title, text, deadlineDate, executorIdInt));
+        return taskDB.saveTask(new Task(usedIdInt, title, text, deadlineDate, executorIdInt));
     }
 
     @RequestMapping(value = "/task/edit", method = RequestMethod.POST)
-    public Task addNewTaskStatus(@RequestParam(value = "usedId") String usedId,
-                                 @RequestParam(value = "title") String title,
-                                 @RequestParam(value = "text") String text,
-                                 @RequestParam(value = "deadline") String deadline,
-                                 @RequestParam(value = "executorId") String executorId,
-                                 @RequestParam(value = "status") String status) {
-        int usedIdInt, executorIdInt;
+    public Task editTask(@RequestParam(value = "usedId") String usedId,
+                         @RequestParam(value = "taskId") String taskId,
+                         @RequestParam(value = "title") String title,
+                         @RequestParam(value = "text") String text,
+                         @RequestParam(value = "deadline") String deadline,
+                         @RequestParam(value = "executorId") String executorId,
+                         @RequestParam(value = "status") String status) {
+        int usedIdInt, executorIdInt, taskIdInt;
         Date deadlineDate;
         try {
             usedIdInt = Integer.parseInt(usedId);
+            taskIdInt = Integer.parseInt(taskId);
             executorIdInt = Integer.parseInt(executorId);
         } catch (NumberFormatException ex) {
             throw new BadRequestException();
@@ -122,13 +124,15 @@ public class WebControllerTask {
             throw new BadRequestException();
         if (usersDB.findById(usedIdInt) == null)
             throw new NotFoundException();
+        if (taskDB.getTask(taskIdInt) == null)
+            throw new NotFoundException();
         if (usersDB.findById(executorIdInt) == null)
             throw new NotFoundException();
-        if (!(status.equals("new") || status.equals("work") || status.equals("made")))
+        if (!(status.equals("work") || status.equals("made")))
             throw new BadRequestException();
 
-        return taskDB.addNewTask(new Task(usedIdInt, title, text, deadlineDate,
-                executorIdInt, taskService.statusTask(status)));
+        return taskService.getEditTask(usedIdInt, taskIdInt, title, text, deadlineDate,
+                executorIdInt, taskService.statusTask(status));
     }
 
     @RequestMapping(value = "/comment/new", method = RequestMethod.POST)

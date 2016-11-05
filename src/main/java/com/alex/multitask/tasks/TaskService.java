@@ -14,7 +14,7 @@ public class TaskService {
     private TaskComponentDB db;
 
     public List<Task> getAllTasksNoText(List<Task> list) {
-        if(list == null)
+        if (list == null)
             return null;
 
         for (Task task : list)
@@ -52,5 +52,19 @@ public class TaskService {
         }
         result.addAll(set);
         return result;
+    }
+
+    public Task getEditTask(int usedId, int taskId, String title, String text, Date deadline,
+                            int executorId, StatusTask status) {
+        Task task = db.getTask(taskId);
+        if (task == null)
+            return null;
+        task.setAuthorId(usedId);
+        task.setTaskTitle(title);
+        task.setTaskText(text);
+        task.setDeadline(deadline);
+        task.setExecutorId(executorId);
+        task.setStatus(status);
+        return db.saveTask(task);
     }
 }

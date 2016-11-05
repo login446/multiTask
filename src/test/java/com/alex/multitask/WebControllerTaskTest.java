@@ -294,9 +294,10 @@ public class WebControllerTaskTest {
     }
 
     @Test
-    public void testAddNewTaskStatus() throws Exception {
+    public void testEditTask() throws Exception {
         mockMvc.perform(post("/task/edit")
                 .param("usedId", "1")
+                .param("taskId", "1")
                 .param("title", "titleee")
                 .param("text", "texttt")
                 .param("deadline", "2222/12/22 12:24")
@@ -312,9 +313,10 @@ public class WebControllerTaskTest {
     }
 
     @Test
-    public void testAddNewTaskStatusBadUsedId() throws Exception {
+    public void testEditTaskBadUsedId() throws Exception {
         mockMvc.perform(post("/task/edit")
                 .param("usedId", "1ff")
+                .param("taskId", "1")
                 .param("title", "titleee")
                 .param("text", "texttt")
                 .param("deadline", "2222/12/22 12:24")
@@ -324,9 +326,23 @@ public class WebControllerTaskTest {
     }
 
     @Test
-    public void testAddNewTaskStatusBadExecutorId() throws Exception {
+    public void testEditTaskBadTaskId() throws Exception {
         mockMvc.perform(post("/task/edit")
                 .param("usedId", "1")
+                .param("taskId", "fgf")
+                .param("title", "titleee")
+                .param("text", "texttt")
+                .param("deadline", "2222/12/22 12:24")
+                .param("executorId", "1")
+                .param("status", "work"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void testEditTaskBadExecutorId() throws Exception {
+        mockMvc.perform(post("/task/edit")
+                .param("usedId", "1")
+                .param("taskId", "1")
                 .param("title", "titleee")
                 .param("text", "texttt")
                 .param("deadline", "2222/12/22 12:24")
@@ -336,9 +352,10 @@ public class WebControllerTaskTest {
     }
 
     @Test
-    public void testAddNewTaskStatusBadDeadline() throws Exception {
+    public void testEditTaskBadDeadline() throws Exception {
         mockMvc.perform(post("/task/edit")
                 .param("usedId", "1")
+                .param("taskId", "1")
                 .param("title", "titleee")
                 .param("text", "texttt")
                 .param("deadline", "1231313")
@@ -348,9 +365,10 @@ public class WebControllerTaskTest {
     }
 
     @Test
-    public void testAddNewTaskStatusTitleIsEmpty() throws Exception {
+    public void testEditTaskTitleIsEmpty() throws Exception {
         mockMvc.perform(post("/task/edit")
                 .param("usedId", "1")
+                .param("taskId", "1")
                 .param("title", "")
                 .param("text", "texttt")
                 .param("deadline", "2222/12/22 12:24")
@@ -360,9 +378,10 @@ public class WebControllerTaskTest {
     }
 
     @Test
-    public void testAddNewTaskStatusTextIsEmpty() throws Exception {
+    public void testEditTaskTextIsEmpty() throws Exception {
         mockMvc.perform(post("/task/edit")
                 .param("usedId", "1")
+                .param("taskId", "1")
                 .param("title", "titleee")
                 .param("text", "")
                 .param("deadline", "2222/12/22 12:24")
@@ -372,9 +391,36 @@ public class WebControllerTaskTest {
     }
 
     @Test
-    public void testAddNewTaskStatusNoUsed() throws Exception {
+    public void testEditTaskNoUsed() throws Exception {
+        mockMvc.perform(post("/task/edit")
+                .param("usedId", "99")
+                .param("taskId", "1")
+                .param("title", "titleee")
+                .param("text", "texttt")
+                .param("deadline", "2222/12/22 12:24")
+                .param("executorId", "1")
+                .param("status", "work"))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void testEditTaskNoTask() throws Exception {
         mockMvc.perform(post("/task/edit")
                 .param("usedId", "1")
+                .param("taskId", "99")
+                .param("title", "titleee")
+                .param("text", "texttt")
+                .param("deadline", "2222/12/22 12:24")
+                .param("executorId", "1")
+                .param("status", "work"))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void testEditTaskNoExecutor() throws Exception {
+        mockMvc.perform(post("/task/edit")
+                .param("usedId", "1")
+                .param("taskId", "1")
                 .param("title", "titleee")
                 .param("text", "texttt")
                 .param("deadline", "2222/12/22 12:24")
@@ -384,21 +430,10 @@ public class WebControllerTaskTest {
     }
 
     @Test
-    public void testAddNewTaskStatusNoExecutor() throws Exception {
+    public void testEditTaskBadStatus() throws Exception {
         mockMvc.perform(post("/task/edit")
                 .param("usedId", "1")
-                .param("title", "titleee")
-                .param("text", "texttt")
-                .param("deadline", "2222/12/22 12:24")
-                .param("executorId", "99")
-                .param("status", "work"))
-                .andExpect(status().isNotFound());
-    }
-
-    @Test
-    public void testAddNewTaskStatusBadStatus() throws Exception {
-        mockMvc.perform(post("/task/edit")
-                .param("usedId", "1")
+                .param("taskId", "1")
                 .param("title", "titleee")
                 .param("text", "texttt")
                 .param("deadline", "2222/12/22 12:24")

@@ -98,6 +98,14 @@ public class Task {
         this.executorId = executorId;
     }
 
+    public void setAuthorId(int authorId) {
+        this.authorId = authorId;
+    }
+
+    public void setTaskTitle(String taskTitle) {
+        this.taskTitle = taskTitle;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

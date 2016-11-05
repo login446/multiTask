@@ -78,6 +78,8 @@ public class UsersComponentDBTest {
         assertThat(componentDB.findById(2).isDelete()).isFalse();
         componentDB.deleteUser(2);
         assertThat(componentDB.findById(2).isDelete()).isTrue();
+
+        componentDB.deleteUser(99);
     }
 
     @Test
@@ -85,6 +87,8 @@ public class UsersComponentDBTest {
         assertThat(componentDB.findById(3).isDelete()).isTrue();
         componentDB.recoveryUser(3);
         assertThat(componentDB.findById(3).isDelete()).isFalse();
+
+        componentDB.recoveryUser(99);
     }
 
     @Test

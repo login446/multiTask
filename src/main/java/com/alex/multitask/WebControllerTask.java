@@ -15,7 +15,10 @@ import java.util.List;
 @RestController
 public class WebControllerTask {
     @Autowired
-    private TaskComponentDB taskDB;
+    private TaskRepository taskRepository;
+
+    @Autowired
+    private CommentRepository commentRepository;
 
     @Autowired
     private UsersRepository usersRepository;
@@ -25,7 +28,7 @@ public class WebControllerTask {
 
     @RequestMapping(value = "/task/all", method = RequestMethod.GET)
     public List<Task> getAllTasksNoText() {
-        return taskService.getAllTasksNoText(taskDB.getAllTasks());
+        return taskService.getAllTasksNoText(taskRepository.findAll());
     }
 
     @RequestMapping(value = "/task/filter", method = RequestMethod.GET)
@@ -48,7 +51,7 @@ public class WebControllerTask {
 
     @RequestMapping(value = "/task/byId", method = RequestMethod.GET)
     public TaskAndComment getTaskAndComment(@RequestParam(value = "taskId") int taskId) {
-        return new TaskAndComment(taskDB.getTask(taskId), taskDB.getComment(taskId));
+        return new TaskAndComment(taskRepository.findOne(taskId), commentRepository.findByTaskId(taskId));
     }
 
     @RequestMapping(value = "/task/new", method = RequestMethod.POST)
@@ -76,7 +79,7 @@ public class WebControllerTask {
             throw new NotFoundException();
         }
 
-        return taskDB.saveTask(new Task(usedId, title, text, deadlineDate, executorId));
+        return taskRepository.save(new Task(usedId, title, text, deadlineDate, executorId));
     }
 
     @RequestMapping(value = "/task/edit", method = RequestMethod.POST)
@@ -102,7 +105,7 @@ public class WebControllerTask {
         if (usersRepository.findOne(usedId) == null) {
             throw new NotFoundException();
         }
-        if (taskDB.getTask(taskId) == null) {
+        if (taskRepository.findOne(taskId) == null) {
             throw new NotFoundException();
         }
         if (usersRepository.findOne(executorId) == null) {
@@ -127,14 +130,14 @@ public class WebControllerTask {
         if (usersRepository.findOne(usedId) == null) {
             throw new NotFoundException();
         }
-        if (taskDB.getTask(taskId) == null) {
+        if (taskRepository.findOne(taskId) == null) {
             throw new NotFoundException();
         }
-        if (taskDB.getComment(taskId) != null) {
+        if (commentRepository.findByTaskId(taskId) != null) {
             throw new ConflictException();
         }
 
-        return taskDB.addComment(new Comment(taskId, usedId, text));
+        return commentRepository.save(new Comment(taskId, usedId, text));
     }
 
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)

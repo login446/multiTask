@@ -11,24 +11,28 @@ import java.util.*;
 @Service
 public class TaskService {
     @Autowired
-    private TaskComponentDB db;
+    private TaskRepository taskRepository;
 
     public List<Task> getAllTasksNoText(List<Task> list) {
-        if (list == null)
+        if (list == null) {
             return null;
-
-        for (Task task : list)
+        }
+        for (Task task : list) {
             task.setTaskText("");
+        }
         return list;
     }
 
     public StatusTask statusTask(String status) {
-        if (status.equals("new"))
+        if (status.equals("new")) {
             return StatusTask.NEW;
-        if (status.equals("work"))
+        }
+        if (status.equals("work")) {
             return StatusTask.WORK;
-        if (status.equals("made"))
+        }
+        if (status.equals("made")) {
             return StatusTask.MADE;
+        }
         return null;
     }
 
@@ -39,16 +43,16 @@ public class TaskService {
         HashSet<Task> set = new HashSet<Task>();
         List<Task> result = new ArrayList<Task>();
         if (authorId != 0) {
-            set.addAll(db.getAllTasksByAuthorId(authorId));
+            set.addAll(taskRepository.findByAuthorId(authorId));
         }
         if (executorId != 0) {
-            set.addAll(db.getAllTasksByExecutorId(executorId));
+            set.addAll(taskRepository.findByExecutorId(executorId));
         }
         if (!status.equals("noStatus")) {
-            set.addAll(db.getAllTasksByStatus(statusTask(status)));
+            set.addAll(taskRepository.findByStatus(statusTask(status)));
         }
         if (deadline.getTime() != 0) {
-            set.addAll(db.getAllTasksByDeadline(deadline));
+            set.addAll(taskRepository.findByDeadline(deadline));
         }
         result.addAll(set);
         return result;
@@ -56,15 +60,16 @@ public class TaskService {
 
     public Task getEditTask(int usedId, int taskId, String title, String text, Date deadline,
                             int executorId, StatusTask status) {
-        Task task = db.getTask(taskId);
-        if (task == null)
+        Task task = taskRepository.findOne(taskId);
+        if (task == null) {
             return null;
+        }
         task.setAuthorId(usedId);
         task.setTaskTitle(title);
         task.setTaskText(text);
         task.setDeadline(deadline);
         task.setExecutorId(executorId);
         task.setStatus(status);
-        return db.saveTask(task);
+        return taskRepository.save(task);
     }
 }

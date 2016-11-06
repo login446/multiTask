@@ -1,7 +1,7 @@
 package com.alex.multitask;
 
 import com.alex.multitask.users.User;
-import com.alex.multitask.users.UsersComponentDB;
+import com.alex.multitask.users.UsersRepository;
 import com.alex.multitask.users.UsersService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,7 +15,7 @@ import java.util.List;
 @RestController
 public class WebControllerUsers {
     @Autowired
-    private UsersComponentDB db;
+    private UsersRepository repository;
 
     @Autowired
     private UsersService usersService;
@@ -25,73 +25,73 @@ public class WebControllerUsers {
         if (name.isEmpty()) {
             throw new BadRequestException();
         }
-        if (db.findByName(name) != null) {
+        if (repository.findByName(name) != null) {
             throw new ConflictException();
         }
-        return db.addUser(name);
+        return repository.save(new User(name));
     }
 
     @RequestMapping(value = "/users/byId", method = RequestMethod.DELETE)
     public void deleteUser(@RequestParam(value = "usedId") int usedId,
                            @RequestParam(value = "id") int id) {
-        User usedUser = db.findById(usedId);
+        User usedUser = repository.findOne(usedId);
         if (usedUser == null) {
             throw new NotFoundException();
         }
-        if (db.findById(id) == null) {
+        if (repository.findOne(id) == null) {
             throw new NotFoundException();
         }
         if (usedId != id && !usersService.isUserAdmin(usedUser)) {
             throw new BadRequestException();
         }
 
-        db.deleteUser(id);
+        usersService.deleteUser(id);
     }
 
     @RequestMapping(value = "/users/restore/byId", method = RequestMethod.POST)
     public void recoveryUser(@RequestParam(value = "usedId") int usedId,
                              @RequestParam(value = "id") int id) {
-        User usedUser = db.findById(usedId);
+        User usedUser = repository.findOne(usedId);
         if (usedUser == null) {
             throw new NotFoundException();
         }
-        if (db.findById(id) == null) {
+        if (repository.findOne(id) == null) {
             throw new NotFoundException();
         }
         if (usedId != id && !usersService.isUserAdmin(usedUser)) {
             throw new BadRequestException();
         }
 
-        db.recoveryUser(id);
+        usersService.recoveryUser(id);
     }
 
     @RequestMapping(value = "/users/rename", method = RequestMethod.POST)
     public User renameUser(@RequestParam(value = "usedId") int usedId,
                            @RequestParam(value = "id") int id,
                            @RequestParam(value = "name") String name) {
-        User usedUser = db.findById(usedId);
+        User usedUser = repository.findOne(usedId);
         if (name.isEmpty()) {
             throw new BadRequestException();
         }
         if (usedUser == null) {
             throw new NotFoundException();
         }
-        if (db.findById(id) == null) {
+        if (repository.findOne(id) == null) {
             throw new NotFoundException();
         }
-        if (db.findByName(name) != null) {
+        if (repository.findByName(name) != null) {
             throw new ConflictException();
         }
         if (usedId != id && !usersService.isUserAdmin(usedUser)) {
             throw new BadRequestException();
         }
 
-        return db.renameUser(id, name);
+        return usersService.renameUser(id, name);
     }
 
     @RequestMapping(value = "/users", method = RequestMethod.GET)
     public List<User> getUsers(@RequestParam(value = "usedId") int usedId) {
-        User usedUser = db.findById(usedId);
+        User usedUser = repository.findOne(usedId);
         if (usedUser == null) {
             throw new NotFoundException();
         }

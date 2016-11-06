@@ -8,5 +8,6 @@ import java.util.List;
  * Created by alex on 29.10.2016.
  */
 public interface UsersRepository extends CrudRepository<User, Integer> {
-    List<User> findByName(String name);
+    User findByName(String name);
+    List<User> findAll();
 }

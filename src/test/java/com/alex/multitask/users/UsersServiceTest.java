@@ -1,29 +1,36 @@
 package com.alex.multitask.users;
 
+import com.alex.multitask.Application;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.AutoConfigureTestDatabase;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.when;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertEquals;
 
 /**
  * Created by alex on 01.11.2016.
  */
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(SpringRunner.class)
+@DataJpaTest
+@SpringBootTest(classes = Application.class)
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@Sql("/scriptUsersTest.sql")
 public class UsersServiceTest {
 
-    @InjectMocks
+    @Autowired
     private UsersService usersService;
 
-    @Mock
-    private UsersComponentDB usersComponentDB;
+    @Autowired
+    private UsersRepository usersRepository;
 
     @Test
     public void testIsUserAdmin() throws Exception {
@@ -36,23 +43,45 @@ public class UsersServiceTest {
 
     @Test
     public void testGetUsers() throws Exception {
-        List<User> list = new ArrayList<User>();
-        User admin = new User("admin");
-        admin.setAccessLevel(AccessLevel.ADMIN);
-        User user = new User("user");
-        User userDelete = new User("userDelete");
-        userDelete.setDelete(true);
-        list.add(admin);
-        list.add(user);
-        list.add(userDelete);
-        when(usersComponentDB.findAll()).thenReturn(list);
+        List<User> list = usersService.getUsers(usersRepository.findOne(1));
 
-        assertEquals(list.get(0), usersService.getUsers(admin).get(0));
-        assertEquals(list.get(1), usersService.getUsers(admin).get(1));
-        assertEquals(list.get(2), usersService.getUsers(admin).get(2));
+        assertEquals(3, list.size());
+        assertEquals(list.get(0).getName(), "admin");
+        assertEquals(list.get(1).getName(), "user");
+        assertEquals(list.get(2).getName(), "userDelete");
 
-        assertEquals(list.get(0).getName(), usersService.getUsers(user).get(0).getName());
-        assertEquals(list.get(1).getName(), usersService.getUsers(user).get(1).getName());
-        assertEquals(2, usersService.getUsers(user).size());
+        list = usersService.getUsers(usersRepository.findOne(2));
+
+        assertEquals(2, list.size());
+        assertEquals(list.get(0).getName(), "admin");
+        assertEquals(list.get(1).getName(), "user");
+    }
+
+
+    @Test
+    public void testDeleteUser() throws Exception {
+        assertThat(usersRepository.findOne(2).isDelete()).isFalse();
+        usersService.deleteUser(2);
+        assertThat(usersRepository.findOne(2).isDelete()).isTrue();
+
+        usersService.deleteUser(99);
+    }
+
+    @Test
+    public void testRecoveryUser() throws Exception {
+        assertThat(usersRepository.findOne(3).isDelete()).isTrue();
+        usersService.recoveryUser(3);
+        assertThat(usersRepository.findOne(3).isDelete()).isFalse();
+
+        usersService.recoveryUser(99);
+    }
+
+    @Test
+    public void testRenameUser() throws Exception {
+        assertThat(usersRepository.findOne(2).getName()).isEqualTo("user");
+        User user = usersService.renameUser(2, "newName");
+        assertThat(usersRepository.findOne(2).getId()).isEqualTo(user.getId());
+        assertThat(usersRepository.findOne(2).getName()).isEqualTo(user.getName());
+        assertThat(usersRepository.findOne(2).getAccessLevel()).isEqualTo(user.getAccessLevel());
     }
 }

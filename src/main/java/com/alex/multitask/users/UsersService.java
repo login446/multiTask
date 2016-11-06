@@ -12,21 +12,50 @@ import java.util.List;
 @Service
 public class UsersService {
     @Autowired
-    private UsersComponentDB db;
+    private UsersRepository repository;
 
     public boolean isUserAdmin(User user) {
         return user != null && user.getAccessLevel() == AccessLevel.ADMIN;
     }
 
     public List<User> getUsers(User user) {
-        List<User> list = db.findAll();
+        List<User> list = repository.findAll();
         ArrayList<User> listForUser = new ArrayList<User>();
-        if (isUserAdmin(user))
+        if (isUserAdmin(user)) {
             return list;
+        }
         for (User temp : list) {
-            if (!temp.isDelete())
+            if (!temp.isDelete()) {
                 listForUser.add(temp);
+            }
         }
         return listForUser;
+    }
+
+    public void deleteUser(int id) {
+        User user = repository.findOne(id);
+        if (user == null) {
+            return;
+        }
+        user.setDelete(true);
+        repository.save(user);
+    }
+
+    public void recoveryUser(int id) {
+        User user = repository.findOne(id);
+        if (user == null) {
+            return;
+        }
+        user.setDelete(false);
+        repository.save(user);
+    }
+
+    public User renameUser(int id, String name) {
+        User user = repository.findOne(id);
+        if (user == null) {
+            return null;
+        }
+        user.setName(name);
+        return repository.save(user);
     }
 }

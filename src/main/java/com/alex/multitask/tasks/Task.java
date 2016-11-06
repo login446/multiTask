@@ -31,13 +31,7 @@ public class Task {
     }
 
     public Task(int authorId, String taskTitle, String taskText, Date deadline, int executorId) {
-        this.authorId = authorId;
-        this.dateOfCreation = new Date();
-        this.taskTitle = taskTitle;
-        this.status = StatusTask.NEW;
-        this.taskText = taskText;
-        this.deadline = deadline;
-        this.executorId = executorId;
+        this(authorId, taskTitle, taskText, deadline, executorId, StatusTask.NEW);
     }
 
     public Task(int authorId, String taskTitle, String taskText, Date deadline, int executorId, StatusTask status) {

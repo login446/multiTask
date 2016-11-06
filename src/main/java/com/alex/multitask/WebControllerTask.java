@@ -1,7 +1,7 @@
 package com.alex.multitask;
 
-import com.alex.multitask.users.UsersComponentDB;
 import com.alex.multitask.tasks.*;
+import com.alex.multitask.users.UsersRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -18,7 +18,7 @@ public class WebControllerTask {
     private TaskComponentDB taskDB;
 
     @Autowired
-    private UsersComponentDB usersDB;
+    private UsersRepository usersRepository;
 
     @Autowired
     private TaskService taskService;
@@ -69,10 +69,10 @@ public class WebControllerTask {
         if (text.isEmpty()) {
             throw new BadRequestException();
         }
-        if (usersDB.findById(usedId) == null) {
+        if (usersRepository.findOne(usedId) == null) {
             throw new NotFoundException();
         }
-        if (usersDB.findById(executorId) == null) {
+        if (usersRepository.findOne(executorId) == null) {
             throw new NotFoundException();
         }
 
@@ -99,13 +99,13 @@ public class WebControllerTask {
         if (text.isEmpty()) {
             throw new BadRequestException();
         }
-        if (usersDB.findById(usedId) == null) {
+        if (usersRepository.findOne(usedId) == null) {
             throw new NotFoundException();
         }
         if (taskDB.getTask(taskId) == null) {
             throw new NotFoundException();
         }
-        if (usersDB.findById(executorId) == null) {
+        if (usersRepository.findOne(executorId) == null) {
             throw new NotFoundException();
         }
         if (!(status.equals("work") || status.equals("made"))) {
@@ -124,7 +124,7 @@ public class WebControllerTask {
         if (text.isEmpty()) {
             throw new BadRequestException();
         }
-        if (usersDB.findById(usedId) == null) {
+        if (usersRepository.findOne(usedId) == null) {
             throw new NotFoundException();
         }
         if (taskDB.getTask(taskId) == null) {

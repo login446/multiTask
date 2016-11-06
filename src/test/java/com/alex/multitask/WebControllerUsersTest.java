@@ -1,6 +1,6 @@
 package com.alex.multitask;
 
-import com.alex.multitask.users.UsersComponentDB;
+import com.alex.multitask.users.UsersRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +29,7 @@ public class WebControllerUsersTest {
     private MockMvc mockMvc;
 
     @Autowired
-    private UsersComponentDB db;
+    private UsersRepository usersRepository;
 
     @Test
     public void testAddUser() throws Exception {
@@ -65,7 +65,7 @@ public class WebControllerUsersTest {
                 .param("id", "2"))
                 .andExpect(status().isOk());
 
-        assertTrue(db.findById(2).isDelete());
+        assertTrue(usersRepository.findOne(2).isDelete());
     }
 
     @Test
@@ -75,7 +75,7 @@ public class WebControllerUsersTest {
                 .param("id", "2"))
                 .andExpect(status().isOk());
 
-        assertTrue(db.findById(2).isDelete());
+        assertTrue(usersRepository.findOne(2).isDelete());
     }
 
     @Test
@@ -117,7 +117,7 @@ public class WebControllerUsersTest {
                 .param("id", "3"))
                 .andExpect(status().isOk());
 
-        assertFalse(db.findById(3).isDelete());
+        assertFalse(usersRepository.findOne(3).isDelete());
     }
 
     @Test
@@ -127,7 +127,7 @@ public class WebControllerUsersTest {
                 .param("id", "3"))
                 .andExpect(status().isOk());
 
-        assertFalse(db.findById(3).isDelete());
+        assertFalse(usersRepository.findOne(3).isDelete());
     }
 
     @Test

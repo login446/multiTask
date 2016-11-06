@@ -32,87 +32,69 @@ public class WebControllerUsers {
     }
 
     @RequestMapping(value = "/users/byId", method = RequestMethod.DELETE)
-    public void deleteUser(@RequestParam(value = "usedId") String usedId,
-                           @RequestParam(value = "id") String id) {
-        int usedIdInt, idInt;
-        try {
-            usedIdInt = Integer.parseInt(usedId);
-            idInt = Integer.parseInt(id);
-        } catch (NumberFormatException ex) {
+    public void deleteUser(@RequestParam(value = "usedId") int usedId,
+                           @RequestParam(value = "id") int id) {
+        User usedUser = db.findById(usedId);
+        if (usedUser == null) {
+            throw new NotFoundException();
+        }
+        if (db.findById(id) == null) {
+            throw new NotFoundException();
+        }
+        if (usedId != id && !usersService.isUserAdmin(usedUser)) {
             throw new BadRequestException();
         }
 
-        User usedUser = db.findById(usedIdInt);
-        if (usedUser == null)
-            throw new NotFoundException();
-        if (db.findById(idInt) == null)
-            throw new NotFoundException();
-        if (usedIdInt != idInt && !usersService.isUserAdmin(usedUser))
-            throw new BadRequestException();
-
-        db.deleteUser(idInt);
+        db.deleteUser(id);
     }
 
     @RequestMapping(value = "/users/restore/byId", method = RequestMethod.POST)
-    public void recoveryUser(@RequestParam(value = "usedId") String usedId,
-                             @RequestParam(value = "id") String id) {
-        int usedIdInt, idInt;
-        try {
-            usedIdInt = Integer.parseInt(usedId);
-            idInt = Integer.parseInt(id);
-        } catch (NumberFormatException ex) {
+    public void recoveryUser(@RequestParam(value = "usedId") int usedId,
+                             @RequestParam(value = "id") int id) {
+        User usedUser = db.findById(usedId);
+        if (usedUser == null) {
+            throw new NotFoundException();
+        }
+        if (db.findById(id) == null) {
+            throw new NotFoundException();
+        }
+        if (usedId != id && !usersService.isUserAdmin(usedUser)) {
             throw new BadRequestException();
         }
 
-        User usedUser = db.findById(usedIdInt);
-        if (usedUser == null)
-            throw new NotFoundException();
-        if (db.findById(idInt) == null)
-            throw new NotFoundException();
-        if (usedIdInt != idInt && !usersService.isUserAdmin(usedUser))
-            throw new BadRequestException();
-
-        db.recoveryUser(idInt);
+        db.recoveryUser(id);
     }
 
     @RequestMapping(value = "/users/rename", method = RequestMethod.POST)
-    public User renameUser(@RequestParam(value = "usedId") String usedId,
-                           @RequestParam(value = "id") String id,
+    public User renameUser(@RequestParam(value = "usedId") int usedId,
+                           @RequestParam(value = "id") int id,
                            @RequestParam(value = "name") String name) {
-        int usedIdInt, idInt;
-        try {
-            usedIdInt = Integer.parseInt(usedId);
-            idInt = Integer.parseInt(id);
-        } catch (NumberFormatException ex) {
+        User usedUser = db.findById(usedId);
+        if (name.isEmpty()) {
+            throw new BadRequestException();
+        }
+        if (usedUser == null) {
+            throw new NotFoundException();
+        }
+        if (db.findById(id) == null) {
+            throw new NotFoundException();
+        }
+        if (db.findByName(name) != null) {
+            throw new ConflictException();
+        }
+        if (usedId != id && !usersService.isUserAdmin(usedUser)) {
             throw new BadRequestException();
         }
 
-        User usedUser = db.findById(usedIdInt);
-        if (name.isEmpty())
-            throw new BadRequestException();
-        if (usedUser == null)
-            throw new NotFoundException();
-        if (db.findById(idInt) == null)
-            throw new NotFoundException();
-        if (db.findByName(name) != null)
-            throw new ConflictException();
-        if (usedIdInt != idInt && !usersService.isUserAdmin(usedUser))
-            throw new BadRequestException();
-
-        return db.renameUser(idInt, name);
+        return db.renameUser(id, name);
     }
 
     @RequestMapping(value = "/users", method = RequestMethod.GET)
-    public List<User> getUsers(@RequestParam(value = "usedId") String usedId) {
-        int usedIdInt;
-        try {
-            usedIdInt = Integer.parseInt(usedId);
-        } catch (NumberFormatException ex) {
-            throw new BadRequestException();
-        }
-        User usedUser = db.findById(usedIdInt);
-        if (usedUser == null)
+    public List<User> getUsers(@RequestParam(value = "usedId") int usedId) {
+        User usedUser = db.findById(usedId);
+        if (usedUser == null) {
             throw new NotFoundException();
+        }
 
         return usersService.getUsers(usedUser);
     }

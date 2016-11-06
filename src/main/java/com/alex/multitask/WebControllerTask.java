@@ -30,132 +30,111 @@ public class WebControllerTask {
 
     @RequestMapping(value = "/task/filter", method = RequestMethod.GET)
     public List<Task> getAllTasksByFilter(
-            @RequestParam(value = "authorId", required = false, defaultValue = "0") String authorId,
-            @RequestParam(value = "executorId", required = false, defaultValue = "0") String executorId,
+            @RequestParam(value = "authorId", required = false, defaultValue = "0") int authorId,
+            @RequestParam(value = "executorId", required = false, defaultValue = "0") int executorId,
             @RequestParam(value = "status", required = false, defaultValue = "noStatus") String status,
             @RequestParam(value = "deadline", required = false, defaultValue = "1970/01/01 03:00") String deadline) {
-        int authorIdInt, executorIdInt;
         Date dateDeadline;
-        try {
-            authorIdInt = Integer.parseInt(authorId);
-            executorIdInt = Integer.parseInt(executorId);
-        } catch (NumberFormatException ex) {
-            throw new BadRequestException();
-        }
         try {
             dateDeadline = new Date(deadline);
         } catch (IllegalArgumentException ex) {
             throw new BadRequestException();
         }
-        if (!(status.equals("new") || status.equals("work") || status.equals("made") || status.equals("noStatus")))
+        if (!(status.equals("new") || status.equals("work") || status.equals("made") || status.equals("noStatus"))) {
             throw new BadRequestException();
-
-        return taskService.getAllTasksNoText(taskService.getAllTasksByFilter(authorIdInt, executorIdInt, status, dateDeadline));
+        }
+        return taskService.getAllTasksNoText(taskService.getAllTasksByFilter(authorId, executorId, status, dateDeadline));
     }
 
     @RequestMapping(value = "/task/byId", method = RequestMethod.GET)
-    public TaskAndComment getTaskAndComment(@RequestParam(value = "taskId") String taskId) {
-        int taskIdInt;
-        try {
-            taskIdInt = Integer.parseInt(taskId);
-        } catch (NumberFormatException ex) {
-            throw new BadRequestException();
-        }
-
-        return new TaskAndComment(taskDB.getTask(taskIdInt), taskDB.getComment(taskIdInt));
+    public TaskAndComment getTaskAndComment(@RequestParam(value = "taskId") int taskId) {
+        return new TaskAndComment(taskDB.getTask(taskId), taskDB.getComment(taskId));
     }
 
     @RequestMapping(value = "/task/new", method = RequestMethod.POST)
-    public Task addNewTask(@RequestParam(value = "usedId") String usedId,
+    public Task addNewTask(@RequestParam(value = "usedId") int usedId,
                            @RequestParam(value = "title") String title,
                            @RequestParam(value = "text") String text,
                            @RequestParam(value = "deadline") String deadline,
-                           @RequestParam(value = "executorId") String executorId) {
-        int usedIdInt, executorIdInt;
+                           @RequestParam(value = "executorId") int executorId) {
         Date deadlineDate;
-        try {
-            usedIdInt = Integer.parseInt(usedId);
-            executorIdInt = Integer.parseInt(executorId);
-        } catch (NumberFormatException ex) {
-            throw new BadRequestException();
-        }
         try {
             deadlineDate = new Date(deadline);
         } catch (IllegalArgumentException ex) {
             throw new BadRequestException();
         }
-        if (title.isEmpty())
+        if (title.isEmpty()) {
             throw new BadRequestException();
-        if (text.isEmpty())
+        }
+        if (text.isEmpty()) {
             throw new BadRequestException();
-        if (usersDB.findById(usedIdInt) == null)
+        }
+        if (usersDB.findById(usedId) == null) {
             throw new NotFoundException();
-        if (usersDB.findById(executorIdInt) == null)
+        }
+        if (usersDB.findById(executorId) == null) {
             throw new NotFoundException();
+        }
 
-        return taskDB.saveTask(new Task(usedIdInt, title, text, deadlineDate, executorIdInt));
+        return taskDB.saveTask(new Task(usedId, title, text, deadlineDate, executorId));
     }
 
     @RequestMapping(value = "/task/edit", method = RequestMethod.POST)
-    public Task editTask(@RequestParam(value = "usedId") String usedId,
-                         @RequestParam(value = "taskId") String taskId,
+    public Task editTask(@RequestParam(value = "usedId") int usedId,
+                         @RequestParam(value = "taskId") int taskId,
                          @RequestParam(value = "title") String title,
                          @RequestParam(value = "text") String text,
                          @RequestParam(value = "deadline") String deadline,
-                         @RequestParam(value = "executorId") String executorId,
+                         @RequestParam(value = "executorId") int executorId,
                          @RequestParam(value = "status") String status) {
-        int usedIdInt, executorIdInt, taskIdInt;
         Date deadlineDate;
-        try {
-            usedIdInt = Integer.parseInt(usedId);
-            taskIdInt = Integer.parseInt(taskId);
-            executorIdInt = Integer.parseInt(executorId);
-        } catch (NumberFormatException ex) {
-            throw new BadRequestException();
-        }
         try {
             deadlineDate = new Date(deadline);
         } catch (IllegalArgumentException ex) {
             throw new BadRequestException();
         }
-        if (title.isEmpty())
+        if (title.isEmpty()) {
             throw new BadRequestException();
-        if (text.isEmpty())
+        }
+        if (text.isEmpty()) {
             throw new BadRequestException();
-        if (usersDB.findById(usedIdInt) == null)
+        }
+        if (usersDB.findById(usedId) == null) {
             throw new NotFoundException();
-        if (taskDB.getTask(taskIdInt) == null)
+        }
+        if (taskDB.getTask(taskId) == null) {
             throw new NotFoundException();
-        if (usersDB.findById(executorIdInt) == null)
+        }
+        if (usersDB.findById(executorId) == null) {
             throw new NotFoundException();
-        if (!(status.equals("work") || status.equals("made")))
+        }
+        if (!(status.equals("work") || status.equals("made"))) {
             throw new BadRequestException();
+        }
 
-        return taskService.getEditTask(usedIdInt, taskIdInt, title, text, deadlineDate,
-                executorIdInt, taskService.statusTask(status));
+        return taskService.getEditTask(usedId, taskId, title, text, deadlineDate,
+                executorId, taskService.statusTask(status));
     }
 
     @RequestMapping(value = "/comment/new", method = RequestMethod.POST)
-    public Comment addComment(@RequestParam(value = "usedId") String usedId,
+    public Comment addComment(@RequestParam(value = "usedId") int usedId,
                               @RequestParam(value = "text") String text,
-                              @RequestParam(value = "taskId") String taskId) {
-        int usedIdInt, taskIdInt;
-        try {
-            usedIdInt = Integer.parseInt(usedId);
-            taskIdInt = Integer.parseInt(taskId);
-        } catch (NumberFormatException ex) {
+                              @RequestParam(value = "taskId") int taskId) {
+
+        if (text.isEmpty()) {
             throw new BadRequestException();
         }
-        if (text.isEmpty())
-            throw new BadRequestException();
-        if (usersDB.findById(usedIdInt) == null)
+        if (usersDB.findById(usedId) == null) {
             throw new NotFoundException();
-        if (taskDB.getTask(taskIdInt) == null)
+        }
+        if (taskDB.getTask(taskId) == null) {
             throw new NotFoundException();
-        if (taskDB.getComment(taskIdInt) != null)
+        }
+        if (taskDB.getComment(taskId) != null) {
             throw new ConflictException();
+        }
 
-        return taskDB.addComment(new Comment(taskIdInt, usedIdInt, text));
+        return taskDB.addComment(new Comment(taskId, usedId, text));
     }
 
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)

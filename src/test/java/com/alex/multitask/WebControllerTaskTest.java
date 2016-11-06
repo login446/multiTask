@@ -1,8 +1,5 @@
 package com.alex.multitask;
 
-import com.alex.multitask.tasks.TaskComponentDB;
-import com.alex.multitask.tasks.TaskService;
-import com.alex.multitask.users.UsersComponentDB;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,15 +27,6 @@ public class WebControllerTaskTest {
 
     @Autowired
     private MockMvc mockMvc;
-
-    @Autowired
-    private UsersComponentDB usersDB;
-
-    @Autowired
-    private TaskComponentDB taskDB;
-
-    @Autowired
-    private TaskService taskService;
 
     @Test
     public void testGetAllTasksNoText() throws Exception {

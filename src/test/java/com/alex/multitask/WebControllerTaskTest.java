@@ -46,10 +46,12 @@ public class WebControllerTaskTest {
                 .param("status", "new")
                 .param("deadline", "2016/11/09 17:23"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()").value(3))
-                .andExpect(jsonPath("$[0].taskText").value(""))
-                .andExpect(jsonPath("$[1].taskText").value(""))
-                .andExpect(jsonPath("$[2].taskText").value(""));
+                .andExpect(jsonPath("$.length()").value(1))
+                .andExpect(jsonPath("$[0].authorId").value("1"))
+                .andExpect(jsonPath("$[0].executorId").value("2"))
+                .andExpect(jsonPath("$[0].status").value("NEW"))
+                .andExpect(jsonPath("$[0].deadline").value(new Date("2016/11/09 17:23").getTime()))
+                .andExpect(jsonPath("$[0].taskText").value(""));
     }
 
     @Test
@@ -98,10 +100,15 @@ public class WebControllerTaskTest {
                 .param("authorId", "1")
                 .param("status", "work"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()").value(3))
-                .andExpect(jsonPath("$[0].taskText").value(""))
-                .andExpect(jsonPath("$[1].taskText").value(""))
-                .andExpect(jsonPath("$[2].taskText").value(""));
+                .andExpect(jsonPath("$.length()").value(0));
+
+        mockMvc.perform(get("/task/filter")
+                .param("authorId", "2")
+                .param("status", "work"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(1))
+                .andExpect(jsonPath("$[0].authorId").value(2))
+                .andExpect(jsonPath("$[0].status").value("WORK"));
     }
 
     @Test

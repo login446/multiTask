@@ -23,19 +23,6 @@ public class TaskService {
         return list;
     }
 
-    public StatusTask statusTask(String status) {
-        if (status.equals("new")) {
-            return StatusTask.NEW;
-        }
-        if (status.equals("work")) {
-            return StatusTask.WORK;
-        }
-        if (status.equals("made")) {
-            return StatusTask.MADE;
-        }
-        return null;
-    }
-
     public List<Task> getAllTasksByFilter(int authorId,
                                           int executorId,
                                           String status,
@@ -49,12 +36,28 @@ public class TaskService {
             set.addAll(taskRepository.findByExecutorId(executorId));
         }
         if (!status.equals("noStatus")) {
-            set.addAll(taskRepository.findByStatus(statusTask(status)));
+            set.addAll(taskRepository.findByStatus(StatusTask.valueOf(status.toUpperCase())));
         }
         if (deadline.getTime() != 0) {
             set.addAll(taskRepository.findByDeadline(deadline));
         }
-        result.addAll(set);
+
+        for (Task task : set) {
+            if (authorId != 0 && task.getAuthorId() != authorId) {
+                continue;
+            }
+            if (executorId != 0 && task.getExecutorId() != executorId) {
+                continue;
+            }
+            if (!status.equals("noStatus") && task.getStatus() != StatusTask.valueOf(status.toUpperCase())) {
+                continue;
+            }
+            if (deadline.getTime() != 0 && task.getDeadline().getTime() != deadline.getTime()) {
+                continue;
+            }
+            result.add(task);
+        }
+
         return result;
     }
 

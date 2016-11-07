@@ -116,7 +116,7 @@ public class WebControllerTask {
         }
 
         return taskService.getEditTask(usedId, taskId, title, text, deadlineDate,
-                executorId, taskService.statusTask(status));
+                executorId, StatusTask.valueOf(status.toUpperCase()));
     }
 
     @RequestMapping(value = "/comment/new", method = RequestMethod.POST)

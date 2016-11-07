@@ -262,11 +262,11 @@ public class WebControllerTaskTest {
     @Test
     public void testAddNewTaskNoUsed() throws Exception {
         mockMvc.perform(post("/task/new")
-                .param("usedId", "1")
+                .param("usedId", "99")
                 .param("title", "titleee")
                 .param("text", "texttt")
                 .param("deadline", "2222/12/22 12:24")
-                .param("executorId", "99"))
+                .param("executorId", "1"))
                 .andExpect(status().isNotFound());
     }
 
@@ -427,6 +427,17 @@ public class WebControllerTaskTest {
                 .param("deadline", "2222/12/22 12:24")
                 .param("executorId", "1")
                 .param("status", "bobi"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void testEditTaskNoParam() throws Exception {
+        mockMvc.perform(post("/task/edit")
+                .param("usedId", "1")
+                .param("taskId", "1")
+                .param("title", "titleee")
+                .param("deadline", "2222/12/22 12:24")
+                .param("executorId", "1"))
                 .andExpect(status().isBadRequest());
     }
 

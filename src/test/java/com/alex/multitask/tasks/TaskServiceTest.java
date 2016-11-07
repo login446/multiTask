@@ -89,13 +89,13 @@ public class TaskServiceTest {
         assertThat(task.getTaskTitle()).isEqualTo("title1");
 
         Task editTask = service.getEditTask(1, taskRepository.findOne(1), "newTitle", "newText",
-                new Date("2022/11/07 17:23"), 1, StatusTask.WORK);
+                new Date("2022/11/07 17:23"), 1, "work");
 
         assertThat(editTask.getAuthorId()).isEqualTo(1);
         assertThat(editTask.getTaskId()).isEqualTo(1);
         assertThat(editTask.getTaskTitle()).isEqualTo("newTitle");
 
         assertThat(service.getEditTask(1, taskRepository.findOne(99), "newTitle", "newText",
-                new Date("2022/11/07 17:23"), 1, StatusTask.WORK)).isNull();
+                new Date("2022/11/07 17:23"), 1, "work")).isNull();
     }
 }

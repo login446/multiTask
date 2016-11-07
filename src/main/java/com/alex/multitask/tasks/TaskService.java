@@ -62,16 +62,26 @@ public class TaskService {
     }
 
     public Task getEditTask(int usedId, Task task, String title, String text, Date deadline,
-                            int executorId, StatusTask status) {
+                            int executorId, String status) {
         if (task == null) {
             return null;
         }
         task.setAuthorId(usedId);
-        task.setTaskTitle(title);
-        task.setTaskText(text);
-        task.setDeadline(deadline);
-        task.setExecutorId(executorId);
-        task.setStatus(status);
+        if (!title.equals("noTitle")) {
+            task.setTaskTitle(title);
+        }
+        if (!text.equals("noText")) {
+            task.setTaskText(text);
+        }
+        if (deadline.getTime() != 0) {
+            task.setDeadline(deadline);
+        }
+        if (executorId != 0) {
+            task.setExecutorId(executorId);
+        }
+        if (!status.equals("noStatus")) {
+            task.setStatus(StatusTask.valueOf(status.toUpperCase()));
+        }
         return taskRepository.save(task);
     }
 }

@@ -360,32 +360,6 @@ public class WebControllerTaskTest {
     }
 
     @Test
-    public void testEditTaskTitleIsEmpty() throws Exception {
-        mockMvc.perform(post("/task/edit")
-                .param("usedId", "1")
-                .param("taskId", "1")
-                .param("title", "")
-                .param("text", "texttt")
-                .param("deadline", "2222/12/22 12:24")
-                .param("executorId", "1")
-                .param("status", "work"))
-                .andExpect(status().isBadRequest());
-    }
-
-    @Test
-    public void testEditTaskTextIsEmpty() throws Exception {
-        mockMvc.perform(post("/task/edit")
-                .param("usedId", "1")
-                .param("taskId", "1")
-                .param("title", "titleee")
-                .param("text", "")
-                .param("deadline", "2222/12/22 12:24")
-                .param("executorId", "1")
-                .param("status", "work"))
-                .andExpect(status().isBadRequest());
-    }
-
-    @Test
     public void testEditTaskNoUsed() throws Exception {
         mockMvc.perform(post("/task/edit")
                 .param("usedId", "99")
@@ -443,8 +417,28 @@ public class WebControllerTaskTest {
                 .param("usedId", "1")
                 .param("taskId", "1")
                 .param("title", "titleee")
-                .param("deadline", "2222/12/22 12:24")
-                .param("executorId", "1"))
+                .param("deadline", "2222/12/22 12:24"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.authorId").value("1"))
+                .andExpect(jsonPath("$.taskId").value("1"))
+                .andExpect(jsonPath("$.taskTitle").value("titleee"))
+                .andExpect(jsonPath("$.taskText").value("text1"))
+                .andExpect(jsonPath("$.deadline").value(new Date("2222/12/22 12:24").getTime()));
+    }
+    @Test
+    public void testEditTaskNoParamUsedId() throws Exception {
+        mockMvc.perform(post("/task/edit")
+                .param("taskId", "1")
+                .param("title", "titleee")
+                .param("deadline", "2222/12/22 12:24"))
+                .andExpect(status().isBadRequest());
+    }
+    @Test
+    public void testEditTaskNoParamTaskId() throws Exception {
+        mockMvc.perform(post("/task/edit")
+                .param("usedId", "1")
+                .param("title", "titleee")
+                .param("deadline", "2222/12/22 12:24"))
                 .andExpect(status().isBadRequest());
     }
 

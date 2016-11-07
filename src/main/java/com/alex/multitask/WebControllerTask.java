@@ -85,22 +85,16 @@ public class WebControllerTask {
     @RequestMapping(value = "/task/edit", method = RequestMethod.POST)
     public Task editTask(@RequestParam(value = "usedId") int usedId,
                          @RequestParam(value = "taskId") int taskId,
-                         @RequestParam(value = "title") String title,
-                         @RequestParam(value = "text") String text,
-                         @RequestParam(value = "deadline") String deadline,
-                         @RequestParam(value = "executorId") int executorId,
-                         @RequestParam(value = "status") String status) {
+                         @RequestParam(value = "title", required = false, defaultValue = "noTitle") String title,
+                         @RequestParam(value = "text", required = false, defaultValue = "noText") String text,
+                         @RequestParam(value = "deadline", required = false, defaultValue = "1970/01/01 03:00") String deadline,
+                         @RequestParam(value = "executorId", required = false, defaultValue = "0") int executorId,
+                         @RequestParam(value = "status", required = false, defaultValue = "noStatus") String status) {
         Date deadlineDate;
         Task task = taskRepository.findOne(taskId);
         try {
             deadlineDate = new Date(deadline);
         } catch (IllegalArgumentException ex) {
-            throw new BadRequestException();
-        }
-        if (title.isEmpty()) {
-            throw new BadRequestException();
-        }
-        if (text.isEmpty()) {
             throw new BadRequestException();
         }
         if (usersRepository.findOne(usedId) == null) {
@@ -109,15 +103,17 @@ public class WebControllerTask {
         if (task == null) {
             throw new NotFoundException();
         }
-        if (usersRepository.findOne(executorId) == null) {
-            throw new NotFoundException();
+        if (executorId != 0) {
+            if (usersRepository.findOne(executorId) == null) {
+                throw new NotFoundException();
+            }
         }
-        if (!(status.equals("work") || status.equals("made"))) {
+        if (!(status.equals("noStatus") || status.equals("new") || status.equals("work") || status.equals("made"))) {
             throw new BadRequestException();
         }
 
         return taskService.getEditTask(usedId, task, title, text, deadlineDate,
-                executorId, StatusTask.valueOf(status.toUpperCase()));
+                executorId, status);
     }
 
     @RequestMapping(value = "/comment/new", method = RequestMethod.POST)

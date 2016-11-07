@@ -13,12 +13,15 @@ public class TaskService {
     @Autowired
     private TaskRepository taskRepository;
 
-    public List<Task> getAllTasksNoText(List<Task> list) {
+    public List<Task> getAllTasksNoTextNoComments(List<Task> list) {
         if (list == null) {
             return null;
         }
         for (Task task : list) {
             task.setTaskText("");
+            if (task.getComments() != null) {
+                task.getComments().clear();
+            }
         }
         return list;
     }

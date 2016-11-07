@@ -29,13 +29,16 @@ public class WebControllerTaskTest {
     private MockMvc mockMvc;
 
     @Test
-    public void testGetAllTasksNoText() throws Exception {
+    public void testGetAllTasksNoTextNoComments() throws Exception {
         mockMvc.perform(get("/task/all"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(3))
                 .andExpect(jsonPath("$[0].taskText").value(""))
+                .andExpect(jsonPath("$[0].comments.length()").value(0))
                 .andExpect(jsonPath("$[1].taskText").value(""))
-                .andExpect(jsonPath("$[2].taskText").value(""));
+                .andExpect(jsonPath("$[1].comments.length()").value(0))
+                .andExpect(jsonPath("$[2].taskText").value(""))
+                .andExpect(jsonPath("$[2].comments.length()").value(0));
     }
 
     @Test
@@ -163,28 +166,42 @@ public class WebControllerTaskTest {
         mockMvc.perform(get("/task/byId")
                 .param("taskId", "2"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.task.taskId").value(2))
-                .andExpect(jsonPath("$.task.authorId").value(1))
-                .andExpect(jsonPath("$.task.taskTitle").value("title2"))
-                .andExpect(jsonPath("$.task.taskText").value("text2"))
-                .andExpect(jsonPath("$.comment.taskId").value(2))
-                .andExpect(jsonPath("$.comment.authorId").value(1))
-                .andExpect(jsonPath("$.comment.commentText").value("comment1"));
+                .andExpect(jsonPath("$.taskId").value(2))
+                .andExpect(jsonPath("$.authorId").value(1))
+                .andExpect(jsonPath("$.taskTitle").value("title2"))
+                .andExpect(jsonPath("$.taskText").value("text2"))
+                .andExpect(jsonPath("$.comments.[0].taskId").value(2))
+                .andExpect(jsonPath("$.comments.[0].authorId").value(1))
+                .andExpect(jsonPath("$.comments.[0].commentText").value("comment1"));
+
+        mockMvc.perform(get("/task/byId")
+                .param("taskId", "3"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.taskId").value(3))
+                .andExpect(jsonPath("$.authorId").value(2))
+                .andExpect(jsonPath("$.taskTitle").value("title3"))
+                .andExpect(jsonPath("$.taskText").value("text3"))
+                .andExpect(jsonPath("$.comments.length()").value(2))
+                .andExpect(jsonPath("$.comments.[0].taskId").value(3))
+                .andExpect(jsonPath("$.comments.[0].authorId").value(2))
+                .andExpect(jsonPath("$.comments.[0].commentText").value("comment2"))
+                .andExpect(jsonPath("$.comments.[1].taskId").value(3))
+                .andExpect(jsonPath("$.comments.[1].authorId").value(2))
+                .andExpect(jsonPath("$.comments.[1].commentText").value("comment3"));
 
         mockMvc.perform(get("/task/byId")
                 .param("taskId", "1"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.task.taskId").value(1))
-                .andExpect(jsonPath("$.task.authorId").value(1))
-                .andExpect(jsonPath("$.task.taskTitle").value("title1"))
-                .andExpect(jsonPath("$.task.taskText").value("text1"))
-                .andExpect(jsonPath("$.comment").doesNotExist());
+                .andExpect(jsonPath("$.taskId").value(1))
+                .andExpect(jsonPath("$.authorId").value(1))
+                .andExpect(jsonPath("$.taskTitle").value("title1"))
+                .andExpect(jsonPath("$.taskText").value("text1"))
+                .andExpect(jsonPath("$.comments.length()").value(0));
 
         mockMvc.perform(get("/task/byId")
                 .param("taskId", "999"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.task").doesNotExist())
-                .andExpect(jsonPath("$.comment").doesNotExist());
+                .andExpect(jsonPath("$.task").doesNotExist());
     }
 
     @Test
@@ -425,6 +442,7 @@ public class WebControllerTaskTest {
                 .andExpect(jsonPath("$.taskText").value("text1"))
                 .andExpect(jsonPath("$.deadline").value(new Date("2222/12/22 12:24").getTime()));
     }
+
     @Test
     public void testEditTaskNoParamUsedId() throws Exception {
         mockMvc.perform(post("/task/edit")
@@ -433,6 +451,7 @@ public class WebControllerTaskTest {
                 .param("deadline", "2222/12/22 12:24"))
                 .andExpect(status().isBadRequest());
     }
+
     @Test
     public void testEditTaskNoParamTaskId() throws Exception {
         mockMvc.perform(post("/task/edit")
@@ -449,7 +468,17 @@ public class WebControllerTaskTest {
                 .param("text", "text")
                 .param("taskId", "1"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.commentId").value(3))
+                .andExpect(jsonPath("$.commentId").value(4))
+                .andExpect(jsonPath("$.taskId").value(1))
+                .andExpect(jsonPath("$.authorId").value(1))
+                .andExpect(jsonPath("$.commentText").value("text"));
+
+        mockMvc.perform(post("/comment/new")
+                .param("usedId", "1")
+                .param("text", "text")
+                .param("taskId", "1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.commentId").value(5))
                 .andExpect(jsonPath("$.taskId").value(1))
                 .andExpect(jsonPath("$.authorId").value(1))
                 .andExpect(jsonPath("$.commentText").value("text"));
@@ -506,6 +535,11 @@ public class WebControllerTaskTest {
                 .param("usedId", "1")
                 .param("text", "text")
                 .param("taskId", "2"))
-                .andExpect(status().isConflict());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.commentId").value(4))
+                .andExpect(jsonPath("$.taskId").value(2))
+                .andExpect(jsonPath("$.commentText").value("text"))
+                .andExpect(jsonPath("$.authorId").value(1))
+        ;
     }
 }

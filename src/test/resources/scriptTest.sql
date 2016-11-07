@@ -36,7 +36,6 @@ VALUES ('userDelete',
         'USER',
         1);
 
-
 DROP TABLE IF EXISTS multitasktest.tasks;
 CREATE TABLE multitasktest.tasks (
   task_id          INT          NOT NULL AUTO_INCREMENT,
@@ -125,3 +124,12 @@ VALUES (3,
         CURRENT_DATE(),
         2,
         'comment2');
+INSERT INTO multitasktest.comments (
+  task_id,
+  date_of_creation,
+  author_id,
+  comment_text)
+VALUES (3,
+        CURRENT_DATE(),
+        2,
+        'comment3');

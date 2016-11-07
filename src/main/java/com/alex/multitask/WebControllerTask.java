@@ -28,7 +28,7 @@ public class WebControllerTask {
 
     @RequestMapping(value = "/task/all", method = RequestMethod.GET)
     public List<Task> getAllTasksNoText() {
-        return taskService.getAllTasksNoText(taskRepository.findAll());
+        return taskService.getAllTasksNoTextNoComments(taskRepository.findAll());
     }
 
     @RequestMapping(value = "/task/filter", method = RequestMethod.GET)
@@ -46,12 +46,12 @@ public class WebControllerTask {
         if (!(status.equals("new") || status.equals("work") || status.equals("made") || status.equals("noStatus"))) {
             throw new BadRequestException();
         }
-        return taskService.getAllTasksNoText(taskService.getAllTasksByFilter(authorId, executorId, status, dateDeadline));
+        return taskService.getAllTasksNoTextNoComments(taskService.getAllTasksByFilter(authorId, executorId, status, dateDeadline));
     }
 
     @RequestMapping(value = "/task/byId", method = RequestMethod.GET)
-    public TaskAndComment getTaskAndComment(@RequestParam(value = "taskId") int taskId) {
-        return new TaskAndComment(taskRepository.findOne(taskId), commentRepository.findByTaskId(taskId));
+    public Task getTaskAndComment(@RequestParam(value = "taskId") int taskId) {
+        return taskRepository.findOne(taskId);
     }
 
     @RequestMapping(value = "/task/new", method = RequestMethod.POST)
@@ -129,9 +129,6 @@ public class WebControllerTask {
         }
         if (taskRepository.findOne(taskId) == null) {
             throw new NotFoundException();
-        }
-        if (commentRepository.findByTaskId(taskId) != null) {
-            throw new ConflictException();
         }
 
         return commentRepository.save(new Comment(taskId, usedId, text));

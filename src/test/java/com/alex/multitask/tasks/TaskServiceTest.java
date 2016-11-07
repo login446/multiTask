@@ -38,7 +38,7 @@ public class TaskServiceTest {
         list.add(new Task(1, "title", "text", new Date(), 1));
         list.add(new Task(1, "title", "text", new Date(), 1));
         list.add(new Task(1, "title", "text", new Date(), 1));
-        List<Task> result = service.getAllTasksNoText(list);
+        List<Task> result = service.getAllTasksNoTextNoComments(list);
 
         assertEquals(result.get(0).getTaskText(), "");
         assertEquals(result.get(1).getTaskText(), "");

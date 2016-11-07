@@ -2,6 +2,7 @@ package com.alex.multitask.tasks;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by alex on 30.10.2016.
@@ -26,6 +27,9 @@ public class Task {
     private Date deadline;
     @Column(name = "executor_id", nullable = false, unique = false)
     private int executorId;
+    @OneToMany(targetEntity = Comment.class)
+    @JoinColumn(name = "task_id")
+    private List<Comment> comments;
 
     public Task() {
     }
@@ -98,6 +102,14 @@ public class Task {
 
     public void setTaskTitle(String taskTitle) {
         this.taskTitle = taskTitle;
+    }
+
+    public List getComments() {
+        return comments;
+    }
+
+    public void setComments(List comments) {
+        this.comments = comments;
     }
 
     @Override

@@ -35,34 +35,36 @@ public class WebControllerUsers {
     public void deleteUser(@RequestParam(value = "usedId") int usedId,
                            @RequestParam(value = "id") int id) {
         User usedUser = repository.findOne(usedId);
+        User user = repository.findOne(id);
         if (usedUser == null) {
             throw new NotFoundException();
         }
-        if (repository.findOne(id) == null) {
+        if (user == null) {
             throw new NotFoundException();
         }
         if (usedId != id && !usersService.isUserAdmin(usedUser)) {
             throw new BadRequestException();
         }
 
-        usersService.deleteUser(id);
+        usersService.deleteUser(user);
     }
 
     @RequestMapping(value = "/users/restore/byId", method = RequestMethod.POST)
     public void recoveryUser(@RequestParam(value = "usedId") int usedId,
                              @RequestParam(value = "id") int id) {
         User usedUser = repository.findOne(usedId);
+        User user = repository.findOne(id);
         if (usedUser == null) {
             throw new NotFoundException();
         }
-        if (repository.findOne(id) == null) {
+        if (user == null) {
             throw new NotFoundException();
         }
         if (usedId != id && !usersService.isUserAdmin(usedUser)) {
             throw new BadRequestException();
         }
 
-        usersService.recoveryUser(id);
+        usersService.recoveryUser(user);
     }
 
     @RequestMapping(value = "/users/rename", method = RequestMethod.POST)
@@ -70,13 +72,14 @@ public class WebControllerUsers {
                            @RequestParam(value = "id") int id,
                            @RequestParam(value = "name") String name) {
         User usedUser = repository.findOne(usedId);
+        User user = repository.findOne(id);
         if (name.isEmpty()) {
             throw new BadRequestException();
         }
         if (usedUser == null) {
             throw new NotFoundException();
         }
-        if (repository.findOne(id) == null) {
+        if (user == null) {
             throw new NotFoundException();
         }
         if (repository.findByName(name) != null) {
@@ -86,7 +89,7 @@ public class WebControllerUsers {
             throw new BadRequestException();
         }
 
-        return usersService.renameUser(id, name);
+        return usersService.renameUser(user, name);
     }
 
     @RequestMapping(value = "/users", method = RequestMethod.GET)

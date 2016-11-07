@@ -91,6 +91,7 @@ public class WebControllerTask {
                          @RequestParam(value = "executorId") int executorId,
                          @RequestParam(value = "status") String status) {
         Date deadlineDate;
+        Task task = taskRepository.findOne(taskId);
         try {
             deadlineDate = new Date(deadline);
         } catch (IllegalArgumentException ex) {
@@ -105,7 +106,7 @@ public class WebControllerTask {
         if (usersRepository.findOne(usedId) == null) {
             throw new NotFoundException();
         }
-        if (taskRepository.findOne(taskId) == null) {
+        if (task == null) {
             throw new NotFoundException();
         }
         if (usersRepository.findOne(executorId) == null) {
@@ -115,7 +116,7 @@ public class WebControllerTask {
             throw new BadRequestException();
         }
 
-        return taskService.getEditTask(usedId, taskId, title, text, deadlineDate,
+        return taskService.getEditTask(usedId, task, title, text, deadlineDate,
                 executorId, StatusTask.valueOf(status.toUpperCase()));
     }
 

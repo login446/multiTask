@@ -60,28 +60,32 @@ public class UsersServiceTest {
 
     @Test
     public void testDeleteUser() throws Exception {
-        assertThat(usersRepository.findOne(2).isDelete()).isFalse();
-        usersService.deleteUser(2);
-        assertThat(usersRepository.findOne(2).isDelete()).isTrue();
+        User user = usersRepository.findOne(2);
+        assertThat(user.isDelete()).isFalse();
+        usersService.deleteUser(user);
+        assertThat(user.isDelete()).isTrue();
 
-        usersService.deleteUser(99);
+        usersService.deleteUser(usersRepository.findOne(99));
     }
 
     @Test
     public void testRecoveryUser() throws Exception {
-        assertThat(usersRepository.findOne(3).isDelete()).isTrue();
-        usersService.recoveryUser(3);
-        assertThat(usersRepository.findOne(3).isDelete()).isFalse();
+        User user = usersRepository.findOne(3);
+        assertThat(user.isDelete()).isTrue();
+        usersService.recoveryUser(user);
+        assertThat(user.isDelete()).isFalse();
 
-        usersService.recoveryUser(99);
+        usersService.recoveryUser(usersRepository.findOne(99));
     }
 
     @Test
     public void testRenameUser() throws Exception {
-        assertThat(usersRepository.findOne(2).getName()).isEqualTo("user");
-        User user = usersService.renameUser(2, "newName");
-        assertThat(usersRepository.findOne(2).getId()).isEqualTo(user.getId());
-        assertThat(usersRepository.findOne(2).getName()).isEqualTo(user.getName());
-        assertThat(usersRepository.findOne(2).getAccessLevel()).isEqualTo(user.getAccessLevel());
+        User user = usersRepository.findOne(2);
+        assertThat(user.getName()).isEqualTo("user");
+        User userNewName = usersService.renameUser(user, "newName");
+        assertThat(user.getId()).isEqualTo(userNewName.getId());
+        assertThat(user.getName()).isEqualTo(userNewName.getName());
+        assertThat(user.getAccessLevel()).isEqualTo(userNewName.getAccessLevel());
+        assertThat(user.getName()).isEqualTo("newName");
     }
 }

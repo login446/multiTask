@@ -52,7 +52,7 @@ public class TaskServiceTest {
         List<Task> listExecutorId = service.getAllTasksByFilter(0, 2, "noStatus", dateDefault);
         List<Task> listStatus = service.getAllTasksByFilter(0, 0, "new", dateDefault);
         List<Task> listDeadline = service.getAllTasksByFilter(0, 0, "noStatus", new Date("2016/11/07 17:23"));
-        List<Task> listAuthorIdAndStatus = service.getAllTasksByFilter(1, 0, "work", dateDefault);
+        List<Task> listAuthorIdAndStatus = service.getAllTasksByFilter(1, 0, "new", dateDefault);
         List<Task> listNoFilter = service.getAllTasksByFilter(0, 0, "noStatus", dateDefault);
 
         assertThat(listAuthorId.size()).isEqualTo(2);
@@ -71,7 +71,11 @@ public class TaskServiceTest {
         assertThat(listDeadline.get(0).getDeadline().getTime()).isEqualTo(new Date("2016/11/07 17:23").getTime());
         assertThat(listDeadline.get(1).getDeadline().getTime()).isEqualTo(new Date("2016/11/07 17:23").getTime());
 
-        assertThat(listAuthorIdAndStatus.size()).isEqualTo(3);
+        assertThat(listAuthorIdAndStatus.size()).isEqualTo(2);
+        assertThat(listAuthorId.get(0).getAuthorId()).isEqualTo(1);
+        assertThat(listAuthorId.get(1).getAuthorId()).isEqualTo(1);
+        assertThat(listAuthorId.get(0).getStatus()).isEqualTo(StatusTask.NEW);
+        assertThat(listAuthorId.get(1).getStatus()).isEqualTo(StatusTask.NEW);
 
         assertThat(listNoFilter.size()).isEqualTo(0);
     }
@@ -84,14 +88,14 @@ public class TaskServiceTest {
         assertThat(task.getTaskId()).isEqualTo(1);
         assertThat(task.getTaskTitle()).isEqualTo("title1");
 
-        Task editTask = service.getEditTask(1, 1, "newTitle", "newText",
+        Task editTask = service.getEditTask(1, taskRepository.findOne(1), "newTitle", "newText",
                 new Date("2022/11/07 17:23"), 1, StatusTask.WORK);
 
         assertThat(editTask.getAuthorId()).isEqualTo(1);
         assertThat(editTask.getTaskId()).isEqualTo(1);
         assertThat(editTask.getTaskTitle()).isEqualTo("newTitle");
 
-        assertThat(service.getEditTask(1, 99, "newTitle", "newText",
+        assertThat(service.getEditTask(1, taskRepository.findOne(99), "newTitle", "newText",
                 new Date("2022/11/07 17:23"), 1, StatusTask.WORK)).isNull();
     }
 }

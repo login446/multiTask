@@ -61,9 +61,8 @@ public class TaskService {
         return result;
     }
 
-    public Task getEditTask(int usedId, int taskId, String title, String text, Date deadline,
+    public Task getEditTask(int usedId, Task task, String title, String text, Date deadline,
                             int executorId, StatusTask status) {
-        Task task = taskRepository.findOne(taskId);
         if (task == null) {
             return null;
         }

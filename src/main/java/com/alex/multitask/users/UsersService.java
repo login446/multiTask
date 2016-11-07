@@ -32,8 +32,7 @@ public class UsersService {
         return listForUser;
     }
 
-    public void deleteUser(int id) {
-        User user = repository.findOne(id);
+    public void deleteUser(User user) {
         if (user == null) {
             return;
         }
@@ -41,8 +40,7 @@ public class UsersService {
         repository.save(user);
     }
 
-    public void recoveryUser(int id) {
-        User user = repository.findOne(id);
+    public void recoveryUser(User user) {
         if (user == null) {
             return;
         }
@@ -50,8 +48,7 @@ public class UsersService {
         repository.save(user);
     }
 
-    public User renameUser(int id, String name) {
-        User user = repository.findOne(id);
+    public User renameUser(User user, String name) {
         if (user == null) {
             return null;
         }

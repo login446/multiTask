@@ -12,22 +12,22 @@ import java.util.Date;
  * Created by alex on 09.11.2016.
  */
 public class TaskSpecs {
-    public static Specification<Task> findByAuthorId(final Integer authorId) {
+    public static Specification<Task> findByAuthorId(final int authorId) {
         return new Specification<Task>() {
             public Predicate toPredicate(Root<Task> root, CriteriaQuery<?> query,
                                          CriteriaBuilder builder) {
-                if (authorId == null)
+                if (authorId == 0)
                     return builder.isNotNull(root.get("authorId"));
                 return builder.equal(root.get("authorId"), authorId);
             }
         };
     }
 
-    public static Specification<Task> findByExecutorId(final Integer executorId) {
+    public static Specification<Task> findByExecutorId(final int executorId) {
         return new Specification<Task>() {
             public Predicate toPredicate(Root<Task> root, CriteriaQuery<?> query,
                                          CriteriaBuilder builder) {
-                if (executorId == null)
+                if (executorId == 0)
                     return builder.isNotNull(root.get("executorId"));
                 return builder.equal(root.get("executorId"), executorId);
             }
@@ -49,7 +49,7 @@ public class TaskSpecs {
         return new Specification<Task>() {
             public Predicate toPredicate(Root<Task> root, CriteriaQuery<?> query,
                                          CriteriaBuilder builder) {
-                if (deadline == null)
+                if (deadline == null || deadline.getTime() == 0)
                     return builder.isNotNull(root.get("deadline"));
                 return builder.equal(root.get("deadline"), deadline);
             }

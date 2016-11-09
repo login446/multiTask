@@ -30,22 +30,13 @@ public class TaskService {
         return list;
     }
 
-    public List<Task> getAllTasksByFilter(Integer authorId,
-                                          Integer executorId,
+    public List<Task> getAllTasksByFilter(int authorId,
+                                          int executorId,
                                           String status,
                                           Date deadline) {
         StatusTask statusTask = null;
-        if (authorId == 0) {
-            authorId = null;
-        }
-        if (executorId == 0) {
-            executorId = null;
-        }
-        if (!status.equals("noStatus")) {
+        if (status.equals("new") || status.equals("work") || status.equals("made")) {
             statusTask = StatusTask.valueOf(status.toUpperCase());
-        }
-        if (deadline.getTime() == 0) {
-            deadline = null;
         }
 
         return taskRepository.findAll(

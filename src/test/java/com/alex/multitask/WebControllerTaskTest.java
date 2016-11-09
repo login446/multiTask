@@ -118,7 +118,7 @@ public class WebControllerTaskTest {
     public void testGetAllTasksByFilterNoParam() throws Exception {
         mockMvc.perform(get("/task/filter"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()").value(0));
+                .andExpect(jsonPath("$.length()").value(3));
     }
 
     @Test

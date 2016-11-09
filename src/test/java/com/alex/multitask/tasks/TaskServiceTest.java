@@ -77,7 +77,7 @@ public class TaskServiceTest {
         assertThat(listAuthorId.get(0).getStatus()).isEqualTo(StatusTask.NEW);
         assertThat(listAuthorId.get(1).getStatus()).isEqualTo(StatusTask.NEW);
 
-        assertThat(listNoFilter.size()).isEqualTo(0);
+        assertThat(listNoFilter.size()).isEqualTo(3);
     }
 
     @Test

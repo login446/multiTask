@@ -3,7 +3,11 @@ package com.alex.multitask.tasks;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.Date;
+import java.util.List;
+
+import static com.alex.multitask.tasks.TaskSpecs.*;
+import static org.springframework.data.jpa.domain.Specifications.where;
 
 /**
  * Created by alex on 30.10.2016.
@@ -26,42 +30,29 @@ public class TaskService {
         return list;
     }
 
-    public List<Task> getAllTasksByFilter(int authorId,
-                                          int executorId,
+    public List<Task> getAllTasksByFilter(Integer authorId,
+                                          Integer executorId,
                                           String status,
                                           Date deadline) {
-        HashSet<Task> set = new HashSet<Task>();
-        List<Task> result = new ArrayList<Task>();
-        if (authorId != 0) {
-            set.addAll(taskRepository.findByAuthorId(authorId));
+        StatusTask statusTask = null;
+        if (authorId == 0) {
+            authorId = null;
         }
-        if (executorId != 0) {
-            set.addAll(taskRepository.findByExecutorId(executorId));
+        if (executorId == 0) {
+            executorId = null;
         }
         if (!status.equals("noStatus")) {
-            set.addAll(taskRepository.findByStatus(StatusTask.valueOf(status.toUpperCase())));
+            statusTask = StatusTask.valueOf(status.toUpperCase());
         }
-        if (deadline.getTime() != 0) {
-            set.addAll(taskRepository.findByDeadline(deadline));
-        }
-
-        for (Task task : set) {
-            if (authorId != 0 && task.getAuthorId() != authorId) {
-                continue;
-            }
-            if (executorId != 0 && task.getExecutorId() != executorId) {
-                continue;
-            }
-            if (!status.equals("noStatus") && task.getStatus() != StatusTask.valueOf(status.toUpperCase())) {
-                continue;
-            }
-            if (deadline.getTime() != 0 && task.getDeadline().getTime() != deadline.getTime()) {
-                continue;
-            }
-            result.add(task);
+        if (deadline.getTime() == 0) {
+            deadline = null;
         }
 
-        return result;
+        return taskRepository.findAll(
+                where(findByAuthorId(authorId))
+                        .and(findByExecutorId(executorId))
+                        .and(findByStatus(statusTask))
+                        .and(findByDeadline(deadline)));
     }
 
     public Task getEditTask(int usedId, Task task, String title, String text, Date deadline,

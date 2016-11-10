@@ -35,10 +35,14 @@ public class UsersServiceTest {
     @Test
     public void testIsUserAdmin() throws Exception {
         User user = new User("test");
+
         user.setAccessLevel(AccessLevel.ADMIN);
         Assert.assertTrue(usersService.isUserAdmin(user));
+
         user.setAccessLevel(AccessLevel.USER);
         Assert.assertFalse(usersService.isUserAdmin(user));
+
+        Assert.assertFalse(usersService.isUserAdmin(null));
     }
 
     @Test
@@ -81,11 +85,16 @@ public class UsersServiceTest {
     @Test
     public void testRenameUser() throws Exception {
         User user = usersRepository.findOne(2);
+
         assertThat(user.getName()).isEqualTo("user");
+
         User userNewName = usersService.renameUser(user, "newName");
         assertThat(user.getId()).isEqualTo(userNewName.getId());
         assertThat(user.getName()).isEqualTo(userNewName.getName());
         assertThat(user.getAccessLevel()).isEqualTo(userNewName.getAccessLevel());
         assertThat(user.getName()).isEqualTo("newName");
+
+        Assert.assertNull(usersService.renameUser(null, "newName"));
+        Assert.assertNull(usersService.renameUser(user, null));
     }
 }

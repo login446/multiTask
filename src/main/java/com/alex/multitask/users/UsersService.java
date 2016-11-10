@@ -52,6 +52,9 @@ public class UsersService {
         if (user == null) {
             return null;
         }
+        if (name == null) {
+            return null;
+        }
         user.setName(name);
         return repository.save(user);
     }

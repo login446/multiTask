@@ -429,7 +429,7 @@ public class WebControllerTaskTest {
     }
 
     @Test
-    public void testEditTaskNoParam() throws Exception {
+    public void testEditTaskNoParamTextExecutorStatus() throws Exception {
         mockMvc.perform(post("/task/edit")
                 .param("usedId", "1")
                 .param("taskId", "1")
@@ -441,6 +441,23 @@ public class WebControllerTaskTest {
                 .andExpect(jsonPath("$.taskTitle").value("titleee"))
                 .andExpect(jsonPath("$.taskText").value("text1"))
                 .andExpect(jsonPath("$.deadline").value(new Date("2222/12/22 12:24").getTime()));
+    }
+
+    @Test
+    public void testEditTaskNoParamTitleDeadline() throws Exception {
+        mockMvc.perform(post("/task/edit")
+                .param("usedId", "1")
+                .param("taskId", "1")
+                .param("text", "titleee")
+                .param("executorId", "2")
+                .param("status", "made"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.authorId").value("1"))
+                .andExpect(jsonPath("$.taskId").value("1"))
+                .andExpect(jsonPath("$.taskTitle").value("title1"))
+                .andExpect(jsonPath("$.taskText").value("titleee"))
+                .andExpect(jsonPath("$.executorId").value("2"))
+                .andExpect(jsonPath("$.status").value("MADE"));
     }
 
     @Test

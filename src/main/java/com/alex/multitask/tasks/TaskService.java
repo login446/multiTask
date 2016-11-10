@@ -32,22 +32,17 @@ public class TaskService {
 
     public List<Task> getAllTasksByFilter(int authorId,
                                           int executorId,
-                                          String status,
+                                          StatusTask status,
                                           Date deadline) {
-        StatusTask statusTask = null;
-        if (status.equals("new") || status.equals("work") || status.equals("made")) {
-            statusTask = StatusTask.valueOf(status.toUpperCase());
-        }
-
         return taskRepository.findAll(
                 where(findByAuthorId(authorId))
                         .and(findByExecutorId(executorId))
-                        .and(findByStatus(statusTask))
+                        .and(findByStatus(status))
                         .and(findByDeadline(deadline)));
     }
 
     public Task getEditTask(int usedId, Task task, String title, String text, Date deadline,
-                            int executorId, String status) {
+                            int executorId, StatusTask status) {
         if (task == null) {
             return null;
         }
@@ -64,8 +59,8 @@ public class TaskService {
         if (executorId != 0) {
             task.setExecutorId(executorId);
         }
-        if (!status.equals("noStatus")) {
-            task.setStatus(StatusTask.valueOf(status.toUpperCase()));
+        if (status != null) {
+            task.setStatus(status);
         }
         return taskRepository.save(task);
     }

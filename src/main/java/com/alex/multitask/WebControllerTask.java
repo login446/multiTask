@@ -38,15 +38,20 @@ public class WebControllerTask {
             @RequestParam(value = "status", required = false, defaultValue = "noStatus") String status,
             @RequestParam(value = "deadline", required = false, defaultValue = "1970/01/01 03:00") String deadline) {
         Date dateDeadline;
+        StatusTask statusTask = null;
         try {
             dateDeadline = new Date(deadline);
-        } catch (IllegalArgumentException ex) {
+        } catch (Exception ex) {
             throw new BadRequestException();
         }
-        if (!(status.equals("new") || status.equals("work") || status.equals("made") || status.equals("noStatus"))) {
-            throw new BadRequestException();
+        if (!status.equals("noStatus")) {
+            try {
+                statusTask = StatusTask.valueOf(status.toUpperCase());
+            } catch (Exception ex) {
+                throw new BadRequestException();
+            }
         }
-        return taskService.getAllTasksNoTextNoComments(taskService.getAllTasksByFilter(authorId, executorId, status, dateDeadline));
+        return taskService.getAllTasksNoTextNoComments(taskService.getAllTasksByFilter(authorId, executorId, statusTask, dateDeadline));
     }
 
     @RequestMapping(value = "/task/byId", method = RequestMethod.GET)
@@ -63,7 +68,7 @@ public class WebControllerTask {
         Date deadlineDate;
         try {
             deadlineDate = new Date(deadline);
-        } catch (IllegalArgumentException ex) {
+        } catch (Exception ex) {
             throw new BadRequestException();
         }
         if (title.isEmpty()) {
@@ -91,10 +96,11 @@ public class WebControllerTask {
                          @RequestParam(value = "executorId", required = false, defaultValue = "0") int executorId,
                          @RequestParam(value = "status", required = false, defaultValue = "noStatus") String status) {
         Date deadlineDate;
+        StatusTask statusTask = null;
         Task task = taskRepository.findOne(taskId);
         try {
             deadlineDate = new Date(deadline);
-        } catch (IllegalArgumentException ex) {
+        } catch (Exception ex) {
             throw new BadRequestException();
         }
         if (usersRepository.findOne(usedId) == null) {
@@ -108,12 +114,16 @@ public class WebControllerTask {
                 throw new NotFoundException();
             }
         }
-        if (!(status.equals("noStatus") || status.equals("new") || status.equals("work") || status.equals("made"))) {
-            throw new BadRequestException();
+        if (!status.equals("noStatus")) {
+            try {
+                statusTask = StatusTask.valueOf(status.toUpperCase());
+            } catch (Exception ex) {
+                throw new BadRequestException();
+            }
         }
 
         return taskService.getEditTask(usedId, task, title, text, deadlineDate,
-                executorId, status);
+                executorId, statusTask);
     }
 
     @RequestMapping(value = "/comment/new", method = RequestMethod.POST)
@@ -140,9 +150,5 @@ public class WebControllerTask {
 
     @ResponseStatus(value = HttpStatus.NOT_FOUND)
     public class NotFoundException extends RuntimeException {
-    }
-
-    @ResponseStatus(value = HttpStatus.CONFLICT)
-    public class ConflictException extends RuntimeException {
     }
 }

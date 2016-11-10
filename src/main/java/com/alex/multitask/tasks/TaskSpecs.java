@@ -16,8 +16,9 @@ public class TaskSpecs {
         return new Specification<Task>() {
             public Predicate toPredicate(Root<Task> root, CriteriaQuery<?> query,
                                          CriteriaBuilder builder) {
-                if (authorId == 0)
-                    return builder.isNotNull(root.get("authorId"));
+                if (authorId == 0) {
+                    return null;
+                }
                 return builder.equal(root.get("authorId"), authorId);
             }
         };
@@ -27,8 +28,9 @@ public class TaskSpecs {
         return new Specification<Task>() {
             public Predicate toPredicate(Root<Task> root, CriteriaQuery<?> query,
                                          CriteriaBuilder builder) {
-                if (executorId == 0)
-                    return builder.isNotNull(root.get("executorId"));
+                if (executorId == 0) {
+                    return null;
+                }
                 return builder.equal(root.get("executorId"), executorId);
             }
         };
@@ -38,8 +40,9 @@ public class TaskSpecs {
         return new Specification<Task>() {
             public Predicate toPredicate(Root<Task> root, CriteriaQuery<?> query,
                                          CriteriaBuilder builder) {
-                if (status == null)
-                    return builder.isNotNull(root.get("status"));
+                if (status == null) {
+                    return null;
+                }
                 return builder.equal(root.get("status"), status);
             }
         };
@@ -49,8 +52,9 @@ public class TaskSpecs {
         return new Specification<Task>() {
             public Predicate toPredicate(Root<Task> root, CriteriaQuery<?> query,
                                          CriteriaBuilder builder) {
-                if (deadline == null || deadline.getTime() == 0)
-                    return builder.isNotNull(root.get("deadline"));
+                if (deadline == null || deadline.getTime() == 0) {
+                    return null;
+                }
                 return builder.equal(root.get("deadline"), deadline);
             }
         };
